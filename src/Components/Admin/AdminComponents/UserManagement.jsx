@@ -1,43 +1,63 @@
 import React, { useState, useEffect } from "react";
 import { Table, Button, Modal, Form, Input, Select, Image } from "antd";
-import axios from "axios";
-import Layout from "./Layout"; // Ensure this path is correct
+import Layout from "./Layout";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { deleteUser, getAllUsers } from "../../../redux/actions/admin";
+import { clearError, clearMessage } from "../../../redux/reducers/adminReducer";
+import { register, updateUser } from "../../../redux/actions/user";
 
 const UserManagement = () => {
-  const [users, setUsers] = useState([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [role, setRole] = useState("");
+  const [password, setPassword] = useState("");
+  const [avatar, setAvatar] = useState("");
+  const [image, setImage] = useState("");
+  const [currentImageBlob, setCurrentImageBlob] = useState(null);
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [editingUser, setEditingUser] = useState(null);
-  const [image, setImage] = useState("");
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
+  const { users, loading, error, message } = useSelector(
+    (state) => state.admin
+  );
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    form.setFieldsValue({ ...editingUser, image });
-  }, [editingUser, image, form]);
-
-  const fetchUsers = async () => {
-    try {
-      const response = await axios.get("https://example.com/api/users"); // Replace with your API endpoint
-      setUsers(response.data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-    }
+  const deleteHandler = (userId) => {
+    dispatch(deleteUser(userId));
   };
 
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
+
+    dispatch(getAllUsers());
+  }, [dispatch, error, message, users]);
+
   const columns = [
-    { title: "ID", dataIndex: "_id", key: "id" },
+    {
+      title: "Sr.No",
+      dataIndex: "sno",
+      key: "sno",
+      render: (text, record, index) => index + 1,
+    },
     {
       title: "Image",
-      dataIndex: "image",
-      key: "image",
-      render: (image) => (
+      dataIndex: "avatar",
+      key: "avatar",
+      render: (avatar) => (
         <Image
           width={50}
-          src={image}
-          alt="User Image"
+          src={avatar?.url}
+          alt="Profile Image"
           fallback="https://via.placeholder.com/50"
         />
       ),
@@ -53,7 +73,7 @@ const UserManagement = () => {
           <Button type="link" onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record._id)}>
+          <Button type="link" danger onClick={() => deleteHandler(record._id)}>
             Delete
           </Button>
         </span>
@@ -69,72 +89,51 @@ const UserManagement = () => {
     setIsModalVisible(false);
     form.resetFields();
     setImage("");
+    setAvatar("");
+    setCurrentImageBlob(null);
     setEditingUser(null);
+  };
+
+  const imageHandler = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      setAvatar(reader.result); // just for preview on screen
+      setImage(file); // database ke liye file ka blob
+    };
   };
 
   const handleSave = async () => {
     try {
-      const values = await form.validateFields();
-      const { name, email, password, role } = values;
+      const myForm = new FormData();
+      myForm.append("name", name);
+      myForm.append("email", email);
+      myForm.append("role", role);
+      if (!editingUser) {
+        myForm.append("password", password);
+      }
 
-      let imageUrl = image;
-      if (typeof image !== "string") {
-        const formData = new FormData();
-        formData.append("file", image);
-        formData.append("upload_preset", "newImage"); // Replace with your Cloudinary upload preset
-
-        const uploadResponse = await axios.post(
-          "https://api.cloudinary.com/v1_1/dlqh7mjvo/image/upload",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
-
-        imageUrl = uploadResponse.data.secure_url;
+      if (image) {
+        myForm.append("file", image);
+      } else if (currentImageBlob) {
+        myForm.append("file", currentImageBlob);
       }
 
       if (editingUser) {
-        // Update existing user
-        const updatedUser = {
-          ...editingUser,
-          name,
-          email,
-          role,
-          image: imageUrl,
-        };
-
-        await axios.put(
-          `https://example.com/api/users/${editingUser._id}`,
-          updatedUser
-        );
-
-        setUsers(
-          users.map((user) =>
-            user._id === editingUser._id ? updatedUser : user
-          )
-        );
+        dispatch(updateUser(myForm, editingUser._id));
       } else {
-        // Add new user
-        const newUserResponse = await axios.post(
-          "https://example.com/api/users",
-          {
-            name,
-            email,
-            password,
-            role,
-            image: imageUrl,
-          }
-        );
-
-        setUsers([...users, newUserResponse.data]);
+        dispatch(register(myForm));
       }
 
       setIsModalVisible(false);
       form.resetFields();
       setImage("");
+      setAvatar("");
+      setCurrentImageBlob(null);
       setEditingUser(null);
     } catch (error) {
       console.error("Error saving user:", error);
@@ -143,24 +142,39 @@ const UserManagement = () => {
 
   const handleEdit = (record) => {
     setEditingUser(record);
-    setIsModalVisible(true);
-  };
+    setName(record.name);
+    setEmail(record.email);
+    setRole(record.role);
+    setAvatar(record.avatar.url);
 
-  const handleDelete = async (id) => {
-    try {
-      await axios.delete(`https://example.com/api/users/${id}`);
-      setUsers(users.filter((user) => user._id !== id));
-    } catch (error) {
-      console.error("Error deleting user:", error);
-    }
+    // Convert the URL to a blob
+    fetch(record.avatar.url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        setCurrentImageBlob(blob);
+      });
+
+    setIsModalVisible(true);
+    form.setFieldsValue({
+      name: record.name,
+      email: record.email,
+      role: record.role,
+    });
   };
 
   return (
     <Layout>
       <div className="flex-1 p-5 bg-white">
         <div>
-          <div style={{ marginBottom: "1rem" }}>
-            <h2>User Management</h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <h2 className="font-bold">ALL USERS</h2>
             <Button type="primary" onClick={handleAddUser}>
               + Add User
             </Button>
@@ -185,10 +199,13 @@ const UserManagement = () => {
                 name="name"
                 label="Name"
                 rules={[
-                  { required: true, message: "Please enter the user's name" },
+                  { required: true, message: "Please enter the user name" },
                 ]}
               >
-                <Input placeholder="Enter Name" />
+                <Input
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Enter Name"
+                />
               </Form.Item>
               <Form.Item
                 name="email"
@@ -197,26 +214,37 @@ const UserManagement = () => {
                   { required: true, message: "Please enter the user's email" },
                 ]}
               >
-                <Input placeholder="Enter Email" />
+                <Input
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter Email"
+                />
               </Form.Item>
-              <Form.Item
-                name="password"
-                label="Password"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the user's password",
-                  },
-                ]}
-              >
-                <Input.Password placeholder="Enter Password" />
-              </Form.Item>
+              {!editingUser && (
+                <Form.Item
+                  name="password"
+                  label="Password"
+                  rules={[
+                    {
+                      required: true,
+                      message: "Please enter the user's password",
+                    },
+                  ]}
+                >
+                  <Input.Password
+                    onChange={(e) => setPassword(e.target.value)}
+                    placeholder="Enter Password"
+                  />
+                </Form.Item>
+              )}
               <Form.Item
                 name="role"
                 label="Role"
                 rules={[{ required: true, message: "Please select a role" }]}
               >
-                <Select placeholder="Select a Role">
+                <Select
+                  onChange={(value) => setRole(value)}
+                  placeholder="Select a Role"
+                >
                   <Select.Option value="admin">Admin</Select.Option>
                   <Select.Option value="user">User</Select.Option>
                 </Select>
@@ -224,17 +252,26 @@ const UserManagement = () => {
               <Form.Item
                 name="image"
                 label="User Image"
-                rules={[{ required: true, message: "Please upload an image!" }]}
+                rules={[
+                  {
+                    required: !editingUser,
+                    message: "Please upload an image!",
+                  },
+                ]}
               >
                 <input
+                  id="chooseAvatar"
+                  name="chooseAvatar"
                   type="file"
                   accept="image/*"
-                  onChange={(e) => setImage(e.target.files[0])}
+                  required={!editingUser}
+                  onChange={imageHandler}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
                 />
-                {image && (
+                {avatar && (
                   <img
-                    src={URL.createObjectURL(image)}
-                    alt="User"
+                    src={avatar}
+                    alt="Profile Image"
                     style={{
                       marginTop: "10px",
                       width: "100px",

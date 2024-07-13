@@ -112,7 +112,7 @@ const QuickLinks = () => {
 
   return (
     <Layout>
-      <div style={{ marginBottom: "1rem" }}>
+      <div className="flex-1 p-5 bg-white">
         <div
           style={{
             display: "flex",
@@ -121,7 +121,7 @@ const QuickLinks = () => {
             marginBottom: "1rem",
           }}
         >
-          <h2>Quick Links</h2>
+          <h2 className="font-bold">ALL QUICK LINKS</h2>
           <Button type="primary" onClick={handleAddLink}>
             + Add Quick Link
           </Button>

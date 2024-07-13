@@ -174,8 +174,15 @@ const Posts = () => {
     <Layout>
       <div className="flex-1 p-5 bg-white">
         <div>
-          <div style={{ marginBottom: "1rem" }}>
-            <h2>Posts</h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <h2 className="font-bold">ALL POSTS</h2>
             <Button type="primary" onClick={handleAddPost}>
               + Add Post
             </Button>

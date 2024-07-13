@@ -176,8 +176,15 @@ const PostManagement = () => {
     <Layout>
       <div className="flex-1 p-5 bg-white">
         <div>
-          <div style={{ marginBottom: "1rem" }}>
-            <h2>Post Categories</h2>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              marginBottom: "1rem",
+            }}
+          >
+            <h2 className="font-bold">ALL CATEGORIES</h2>
             <Button type="primary" onClick={handleAddCategory}>
               + Add Category
             </Button>
@@ -185,9 +192,7 @@ const PostManagement = () => {
           <Table dataSource={categories} columns={columns} />
 
           <Modal
-            title={
-              editingCategory ? "Edit Post Category" : "Add Post Category"
-            }
+            title={editingCategory ? "Edit Post Category" : "Add Post Category"}
             visible={isModalVisible}
             onCancel={handleCancel}
             footer={[
@@ -242,9 +247,7 @@ const PostManagement = () => {
               <Form.Item
                 name="image"
                 label="Category Image"
-                rules={[
-                  { required: true, message: "Please upload an image!" },
-                ]}
+                rules={[{ required: true, message: "Please upload an image!" }]}
               >
                 <ImageUpload setImage={setImage} />
                 {image && (

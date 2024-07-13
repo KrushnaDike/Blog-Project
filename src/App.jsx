@@ -42,6 +42,7 @@ import PostMangagement from "./Components/Admin/AdminComponents/PostMangagement"
 import Posts from "./Components/Admin/AdminComponents/Posts";
 import CreatePages from "./Components/Admin/AdminComponents/CreatePages";
 import QuickLinks from "./Components/Admin/AdminComponents/QuickLinks";
+import Slider from "./Components/Admin/AdminComponents/Slider";
 import LogoText from "./Components/Admin/AdminComponents/LogoText";
 import UserManagement from "./Components/Admin/AdminComponents/UserManagement";
 import { useDispatch, useSelector } from "react-redux";
@@ -56,6 +57,7 @@ function App() {
   const { isAuthenticated, user, error, message, loading } = useSelector(
     (state) => state.user
   );
+  const { message: sliderMessage } = useSelector((state) => state.slider);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -71,7 +73,7 @@ function App() {
 
   useEffect(() => {
     dispatch(loadUser());
-  }, [dispatch]);
+  }, [dispatch, message, sliderMessage]);
 
   console.log(user);
 
@@ -91,6 +93,10 @@ function App() {
           {user && user.role === "admin" ? (
             <>
               {/* Admin Routes */}
+              <Route
+                path="/"
+                element={<Home user={user} isAuthenticated={isAuthenticated} />}
+              />
               <Route path="/admin" element={<Admin />} />
               <Route
                 path="/admin/post-management/categories"
@@ -103,12 +109,19 @@ function App() {
               />
               <Route path="/admin/footer/quicklinks" element={<QuickLinks />} />
               <Route path="/admin/footer/logo-text" element={<LogoText />} />
-              <Route path="/admin/user-management" element={<UserManagement />} />
+              <Route path="/admin/footer/slider" element={<Slider />} />
+              <Route
+                path="/admin/user-management"
+                element={<UserManagement />}
+              />
             </>
           ) : isAuthenticated ? (
             <>
               {/* User Routes */}
-              <Route path="/" element={<Home user={user} />} />
+              <Route
+                path="/"
+                element={<Home user={user} isAuthenticated={isAuthenticated} />}
+              />
               <Route path="food" element={<Food />}>
                 <Route path="/food/restaruant" element={<Restaurant />}></Route>
                 <Route path="/food/streetfood" element={<StreetFood />}></Route>
@@ -159,7 +172,10 @@ function App() {
             </>
           ) : (
             <>
-              <Route path="/" element={<Home user={user} />} />
+              <Route
+                path="/"
+                element={<Home user={user} isAuthenticated={isAuthenticated} />}
+              />
               <Route path="*" element={<PageNotFound />} />
             </>
           )}

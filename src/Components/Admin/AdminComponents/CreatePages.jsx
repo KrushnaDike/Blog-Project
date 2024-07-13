@@ -114,6 +114,7 @@ const CreatePages = () => {
 
   return (
     <Layout>
+    <div className="flex-1 p-5 bg-white">
       <div
         style={{
           display: "flex",
@@ -122,7 +123,7 @@ const CreatePages = () => {
           marginBottom: "1rem",
         }}
       >
-        <h2>Pages</h2>
+        <h2 className="font-bold">ALL PAGES</h2>
         <Button type="primary" onClick={handleAddPage}>
           + Add Page
         </Button>
@@ -198,6 +199,8 @@ const CreatePages = () => {
           </Form.Item>
         </Form>
       </Modal>
+
+    </div>
     </Layout>
   );
 };

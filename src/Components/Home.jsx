@@ -1,11 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import MainLayout from "../Pages/MainLayout";
-import { useNavigate } from "react-router-dom";
+import Admin from "./Admin/Admin";
 
-function Home() {
+function Home({ isAuthenticated = false, user }) {
   return (
     <div>
-      <MainLayout />
+      {isAuthenticated && user && user.role === "admin" ? (
+        <>
+          <Admin />
+        </>
+      ) : (
+        <>
+          <MainLayout />
+        </>
+      )}
     </div>
   );
 }

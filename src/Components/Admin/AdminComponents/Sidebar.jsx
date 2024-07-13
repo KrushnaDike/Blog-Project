@@ -82,6 +82,12 @@ const Sidebar = () => {
           label: "Quick Links",
           to: "/admin/footer/quicklinks",
         },
+        {
+          key: "/admin/footer/slider",
+          icon: <FileTextOutlined />,
+          label: "Slider Images",
+          to: "/admin/footer/slider",
+        },
       ],
     },
     {

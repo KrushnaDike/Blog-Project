@@ -9,8 +9,52 @@ import {
   logoutFail,
   logoutRequest,
   logoutSuccess,
+  signupFail,
+  signupRequest,
+  signupSuccess,
+  updateUserFail,
+  updateUserRequest,
+  updateUserSuccess,
 } from "../reducers/userReducer";
 import { server } from "../store";
+
+export const register = (formdata) => async (dispatch) => {
+  try {
+    dispatch(signupRequest());
+    const { data } = await axios.post(`${server}/user/signup`, formdata, {
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+
+    dispatch(signupSuccess(data));
+  } catch (error) {
+    console.log("🚀 ~ login ~ error:", error);
+    dispatch(signupFail(error.response.data.message));
+  }
+};
+
+export const updateUser = (formdata, userId) => async (dispatch) => {
+  try {
+    dispatch(updateUserRequest());
+    const { data } = await axios.put(
+      `${server}/user/updateUser/${userId}`,
+      formdata,
+      {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+
+    dispatch(updateUserSuccess(data));
+  } catch (error) {
+    console.log("🚀 ~ login ~ error:", error);
+    dispatch(updateUserFail(error.response.data.message));
+  }
+};
 
 export const login = (email, password) => async (dispatch) => {
   try {

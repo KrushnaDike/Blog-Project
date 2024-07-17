@@ -1,15 +1,63 @@
-import React from 'react'
+import React, { useEffect, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { clearError, clearMessage } from "../redux/reducers/adReducer";
+import { getAllAds } from "../redux/actions/ads";
+// import "./Ads.css";
 
-function Ads() {
+const Ads = () => {
+  const { ads, loading, error, message } = useSelector((state) => state.ads);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
+
+    dispatch(getAllAds());
+  }, [dispatch, error, message]);
+
+  if (!ads) {
+    return <div>Loading...</div>;
+  }
+
+  // console.log(ads);
+
+  const settings = {
+    dots: true,
+    infinite: true,
+    autoplay: true,
+    autoplaySpeed: 2000,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
+
   return (
-    <div>
-       <div className="w-full h-550px bg-white rounded shadow-md flex justify-center items-center">
-        <div className='w-[600px] h-[300px] bg-gray-300 items-center flex justify-center'>
-        <h1 className='text-center text-4xl'>ADS</h1>
-        </div> 
-      </div>
+    <div className="ads-container p-4">
+      <Slider {...settings}>
+        {ads.map((ad) => (
+          <div key={ad._id} className="ad-item">
+            <a href={ad.link} target="_blank" rel="noopener noreferrer">
+              <img
+                src={ad.image.url}
+                alt="Ad"
+                className="ad-image w-full h-64 object-fit rounded-lg shadow-lg"
+              />
+            </a>
+          </div>
+        ))}
+      </Slider>
     </div>
-  )
-}
+  );
+};
 
-export default Ads
+export default Ads;

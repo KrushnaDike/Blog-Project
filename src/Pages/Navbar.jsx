@@ -14,10 +14,10 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState("All");
 
-  const location = useLocation(); // Get the current location
+  const location = useLocation();
   useEffect(() => {
-    const path = location.pathname.split("/")[1]; // Get the first part of the path
-    setActive(path ? path.charAt(0).toUpperCase() + path.slice(1) : "All"); // Set active based on the path
+    const path = location.pathname.split("/")[1];
+    setActive(path ? path.charAt(0).toUpperCase() + path.slice(1) : "All");
   }, [location]);
 
   const toggleMenu = () => {
@@ -25,7 +25,6 @@ const Navbar = () => {
   };
 
   const handleClick = (item) => {
-    console.log(item);
     setActive(item);
   };
 
@@ -34,7 +33,6 @@ const Navbar = () => {
   );
   const dispatch = useDispatch();
 
-  // Fetch pages on component mount
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -44,13 +42,9 @@ const Navbar = () => {
       toast.info(message);
       dispatch(clearMessage());
     }
-
     dispatch(getAllPages());
   }, [dispatch, error, message]);
 
-  // console.log(pages);
-
-  // Function to format page title for URLs
   const formatTitleForUrl = (title) => {
     return title.replace(/ & /g, "").replace(/ /g, "").toLowerCase();
   };
@@ -64,11 +58,9 @@ const Navbar = () => {
       <nav className="bg-green-100 border-gray-200 dark:bg-gray-900">
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
           <Link to="/" className="flex items-center space-x-3">
-            <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              <img src={mainlogo} alt="Logo"></img>
-            </span>
+            <img src={mainlogo} alt="Logo" className="h-10" />
           </Link>
-          <div className="flex items-center space-x-6 rtl:space-x-reverse md:hidden">
+          <div className="flex items-center space-x-6 md:hidden">
             <button onClick={toggleMenu} className="focus:outline-none">
               {isOpen ? (
                 <svg
@@ -103,7 +95,7 @@ const Navbar = () => {
               )}
             </button>
           </div>
-          <div class="flex items-center space-x-6 rtl:space-x-reverse">
+          <div className="flex items-center space-x-6 rtl:space-x-reverse">
             <div className="flex items-center w-full md:w-auto">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -128,8 +120,7 @@ const Navbar = () => {
 
             <div
               className={`flex items-center space-x-4 rtl:space-x-reverse md:flex md:flex-grow md:justify-end 
-          isOpen ? 'block' : 'hidden'
-         }`}
+              ${isOpen ? "block" : "hidden"}`}
             >
               <a href="#">
                 <img src={facebook} alt="facebook" />
@@ -144,49 +135,6 @@ const Navbar = () => {
                 <img src={Twitter} alt="Twitter" className="w-1/2" />
               </a>
             </div>
-            {/* <div
-              className={`flex flex-col space-y-4  md:hidden md:flex-grow md:justify-end ${
-                isOpen ? "block" : "hidden"
-              }`}
-            >
-              <Link
-                to="/food"
-                className="text-gray-900 dark:text-white hover:underline px-3 py-2"
-              >
-                Food
-              </Link>
-              <Link
-                to="/travel"
-                className="text-gray-900 dark:text-white hover:underline px-3 py-2"
-              >
-                Travel
-              </Link>
-              <Link
-                to="/familyFun"
-                className="text-gray-900 dark:text-white hover:underline px-3 py-2"
-              >
-                Family & Fun
-              </Link>
-              <Link
-                to="/recipe"
-                className="text-gray-900 dark:text-white hover:underline px-3 py-2"
-              >
-                Recipe
-              </Link>
-              <Link
-                to="/events"
-                className="text-gray-900 dark:text-white hover:underline px-3 py-2"
-              >
-                {" "}
-                Events
-              </Link>
-              <Link
-                to="/foundation"
-                className="text-gray-900 dark:text-white hover:underline px-3 py-2"
-              >
-                Foundation
-              </Link>
-            </div> */}
           </div>
         </div>
       </nav>
@@ -195,18 +143,18 @@ const Navbar = () => {
         <ul className="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0">
           <li
             className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "All" ? "bg-green-500" : ""
+              active === "All" ? "bg-green-500 text-white" : ""
             }`}
-            onClick={() => handleClick("food")}
+            onClick={() => handleClick("All")}
           >
-            <Link to="/">All</Link>
+            <Link to="/">Home</Link>
           </li>
 
           {pages.map((page) => (
             <li
               key={page._id}
               className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-                active === page.title ? "bg-green-500" : ""
+                active === page.title ? "bg-green-500 text-white" : ""
               }`}
               onClick={() => handleClick(page.title)}
             >
@@ -228,145 +176,12 @@ const Navbar = () => {
         <div className="flex justify-end items-center w-1/2">
           <Link
             to="/contactus"
-            className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900"
+            className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900 rounded"
           >
             Contact Us
           </Link>
         </div>
       </nav>
-
-      {/* Previous code */}
-      {/* <nav className="bg-green-200 flex justify-center items-center px-4 py-2 shadow-md">
-        <ul className="flex flex-row space-x-4">
-          <li
-            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "food" ? "bg-green-500" : ""
-            }`}
-            onClick={() => handleClick("food")}
-          >
-            <Link to="/food">Food</Link>
-          </li>
-
-          <li
-            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "travel" ? "bg-green-500" : ""
-            }`}
-            onClick={() => handleClick("travel")}
-          >
-            <Link to="/travel">Travel</Link>
-          </li>
-
-          <li
-            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "familyFun" ? "bg-green-500" : ""
-            }`}
-            onClick={() => handleClick("familyFun")}
-          >
-            <Link to="/familyFun">Family & Fun</Link>
-          </li>
-
-          <li
-            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "recipe" ? "bg-green-500" : ""
-            }`}
-            onClick={() => handleClick("recipe")}
-          >
-            <Link to="/recipe">Recipe</Link>
-          </li>
-
-          <li
-            className={`text-black-300 hover:text-underline hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "events" ? "bg-green-700" : ""
-            }`}
-            onClick={() => handleClick("events")}
-          >
-            <Link to="/events">Events</Link>
-          </li>
-
-          <li
-            className={`text-black-300 hover:text-underline hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "foundation" ? "bg-green-500" : ""
-            }`}
-            onClick={() => handleClick("recipe")}
-          >
-            <Link to="/foundation">Foundation</Link>
-          </li>
-        </ul>
-        <div className="flex justify-end items-center w-1/2">
-          <Link
-            to="/contactus"
-            className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900"
-          >
-            Contact Us
-          </Link>
-        </div>
-      </nav> */}
-
-      {/* <nav class="bg-green-200 dark:bg-gray-700">
-        <div class="max-w-screen-xl px-4 py-3 mx-auto">
-          <div class="flex justify-end items-center">
-            <ul class="flex flex-row font-medium mt-0 space-x-8 rtl:space-x-reverse text-sm items-center">
-              <li>
-                <Link
-                  to="/food"
-                  class="text-gray-900 dark:text-white hover:underline"
-                  aria-current="page"
-                >
-                  Food
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/travel"
-                  class="text-gray-900 dark:text-white hover:underline hover:bg-green-600"
-                >
-                  Travel
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/familyFun"
-                  class="text-gray-900 dark:text-white hover:underline"
-                >
-                  Family & Fun
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/recipe"
-                  class="text-gray-900 dark:text-white hover:underline"
-                >
-                  Recipe
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/events"
-                  class="text-gray-900 dark:text-white hover:underline"
-                >
-                  Events
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/foundation"
-                  class="text-gray-900 dark:text-white hover:underline"
-                >
-                  Foundation
-                </Link>
-              </li>
-
-              <li>
-                <Link to="/home">
-                  <button className="bg-green-700 hover:bg-grren-700 mx-5 text-white font-bold py-2 px-4 rounded shadow-md focus:outline-none">
-                    Contact Us
-                  </button>
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav> */}
     </>
   );
 };

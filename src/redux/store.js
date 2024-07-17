@@ -8,6 +8,7 @@ import quicklinkReducer from "./reducers/quicklinkReducer";
 import postsReducer from "./reducers/postsReducer";
 import pagesReducer from "./reducers/pagesReducer";
 import popupReducer from "./reducers/popupReducer";
+import adReducer from "./reducers/adReducer";
 
 export const server = "http://localhost:2000/api/v1";
 
@@ -20,6 +21,7 @@ const store = configureStore({
     posts: postsReducer,
     pages: pagesReducer,
     popups: popupReducer,
+    ads: adReducer,
   },
 });
 

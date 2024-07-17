@@ -24,6 +24,18 @@ const postSlice = createSlice({
       state.error = action.payload;
     },
 
+    getRecentPostsRequest: (state) => {
+      state.loading = true;
+    },
+    getRecentPostsSuccess: (state, action) => {
+      state.loading = false;
+      state.posts = action.payload;
+    },
+    getRecentPostsFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
     createPostRequest: (state) => {
       state.loading = true;
     },
@@ -84,6 +96,9 @@ export const {
   updatePostRequest,
   updatePostSuccess,
   updatePostFail,
+  getRecentPostsRequest,
+  getRecentPostsSuccess,
+  getRecentPostsFail,
 
   clearError,
   clearMessage,

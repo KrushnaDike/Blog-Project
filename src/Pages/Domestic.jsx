@@ -4,7 +4,7 @@ import facebook from "../assets/Facebook.png";
 import Instgram from "../assets/Instagram.png";
 import Twitter from "../assets/Twitter.png";
 import Youtube1 from "../assets/Youtube1.png";
-import { getAllPosts } from "../redux/actions/posts";
+import { getAllPosts, getRecentFourPosts } from "../redux/actions/posts";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, clearMessage } from "../redux/reducers/postsReducer";
 import { toast } from "react-toastify";
@@ -35,7 +35,7 @@ function Domestic() {
     if (pageTitle) {
       dispatch(getAllPosts(pageTitle));
     } else {
-      dispatch(getAllPosts());
+      dispatch(getRecentFourPosts());
     }
   }, [dispatch, error, message]);
 

@@ -10,6 +10,9 @@ import {
   getAllPostsFail,
   getAllPostsRequest,
   getAllPostsSuccess,
+  getRecentPostsFail,
+  getRecentPostsRequest,
+  getRecentPostsSuccess,
   updatePostFail,
   updatePostRequest,
   updatePostSuccess,
@@ -91,5 +94,22 @@ export const deletePost = (postId) => async (dispatch) => {
   } catch (error) {
     console.log("🚀 ~ login ~ error:", error);
     dispatch(deletePostFail(error.response.data.message));
+  }
+};
+
+export const getRecentFourPosts = () => async (dispatch) => {
+  try {
+    dispatch(getRecentPostsRequest());
+    const { data } = await axios.get(`${server}/post/getRecentPosts`, {
+      headers: {
+        "Content-type": "application/json",
+      },
+      withCredentials: true,
+    });
+
+    dispatch(getRecentPostsSuccess(data.recentPosts));
+  } catch (error) {
+    console.log("🚀 ~ getRecentPosts ~ error:", error);
+    dispatch(getRecentPostsFail(error.response.data.message));
   }
 };

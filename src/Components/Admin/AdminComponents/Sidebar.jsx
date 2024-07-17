@@ -56,6 +56,12 @@ const Sidebar = () => {
           label: "Popups",
           to: "/admin/post-management/popup",
         },
+        {
+          key: "/admin/post-management/ads",
+          icon: <FileTextOutlined />,
+          label: "Ad's",
+          to: "/admin/post-management/ads",
+        },
       ],
     },
     {

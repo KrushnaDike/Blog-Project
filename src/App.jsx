@@ -56,6 +56,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getAllSliderImages } from "./redux/actions/slider";
 import Popups from "./Components/Admin/AdminComponents/Popups";
+import AdminAds from "./Components/Admin/AdminComponents/AdminAds";
 
 function App() {
   const { isAuthenticated, user, error, message, loading } = useSelector(
@@ -109,6 +110,7 @@ function App() {
               />
               <Route path="/admin/post-management/posts" element={<Posts />} />
               <Route path="/admin/post-management/popup" element={<Popups />} />
+              <Route path="/admin/post-management/ads" element={<AdminAds />} />
               <Route
                 path="/admin/custompages/createpage"
                 element={<CreatePages />}

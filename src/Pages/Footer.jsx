@@ -71,7 +71,7 @@ function Footer() {
               </li>
               <li className="mb-4">
                 <Link to="/familyfun/rahanVeg" className="hover:underline">
-                  Rahan's Veg
+                  Rahan's Vlog
                 </Link>
               </li>
 

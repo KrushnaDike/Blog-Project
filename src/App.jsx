@@ -35,6 +35,8 @@ import Awards from "./SubMenu/Awards";
 import ShowMore from "./SubMenu/ShowMore";
 import Category from "./Pages/Category";
 import Domestic from "./Pages/Domestic";
+import DynamicPage from "./Pages/DynamicPage";
+import RecipeDataCook from "./Components/RecipeDataCook";
 
 // Admin dashboard
 import Admin from "./Components/Admin/Admin";
@@ -52,6 +54,8 @@ import { ProtectedRoute } from "protected-route-react";
 import Login from "./Auth/Login";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { getAllSliderImages } from "./redux/actions/slider";
+import Popups from "./Components/Admin/AdminComponents/Popups";
 
 function App() {
   const { isAuthenticated, user, error, message, loading } = useSelector(
@@ -73,9 +77,10 @@ function App() {
 
   useEffect(() => {
     dispatch(loadUser());
+    dispatch(getAllSliderImages());
   }, [dispatch, message, sliderMessage]);
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <>
@@ -103,6 +108,7 @@ function App() {
                 element={<PostMangagement />}
               />
               <Route path="/admin/post-management/posts" element={<Posts />} />
+              <Route path="/admin/post-management/popup" element={<Popups />} />
               <Route
                 path="/admin/custompages/createpage"
                 element={<CreatePages />}
@@ -168,10 +174,17 @@ function App() {
               <Route path="/cardList" element={<CardList />} />
               <Route path="/showMore" element={<ShowMore />} />
               <Route path="/domestic" element={<Domestic />} />
+              <Route path="/recipedatacook" element={<RecipeDataCook />} />
+              <Route path="/foundation" element={<Foundation />} />
+
+              {/* Dynamic Route */}
+              <Route path="/:title" element={<DynamicPage />} />
+
               <Route path="*" element={<PageNotFound />} />
             </>
           ) : (
             <>
+              {/* All accessable routes */}
               <Route
                 path="/"
                 element={<Home user={user} isAuthenticated={isAuthenticated} />}

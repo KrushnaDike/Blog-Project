@@ -174,7 +174,10 @@ const Slider = () => {
               marginBottom: "1rem",
             }}
           >
-            <h2 className="font-bold">ALL SLIDING IMAGES</h2>
+            <h2 className="font-bold">
+              ALL SLIDING IMAGES{" "}
+              <span>(1920x1080 pixels imagaes are prefered)</span>
+            </h2>
             <Button type="primary" onClick={handleAddSliderImage}>
               + Add Sliding Image
             </Button>

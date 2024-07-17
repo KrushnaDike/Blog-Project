@@ -45,7 +45,7 @@ function International() {
             </div>
           </div>
         </div>
-        <div className="flex flex-row space-y-4">
+        <div className="flex flex-row space-y-4 mb-5">
           <div className="relative overflow-hidden rounded-xl shadow-md">
             <img
               src={blogtravel}

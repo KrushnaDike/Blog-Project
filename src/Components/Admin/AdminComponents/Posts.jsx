@@ -1,151 +1,78 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Button,
-  Modal,
-  Form,
-  Input,
-  Select,
-  Upload,
-  message,
-} from "antd";
-import { UploadOutlined } from "@ant-design/icons";
-import axios from "axios";
+import { Table, Button, Modal, Form, Input, Select, Image } from "antd";
 import Layout from "./Layout";
+import { useDispatch, useSelector } from "react-redux";
+import { clearError, clearMessage } from "../../../redux/reducers/postsReducer";
+import { toast } from "react-toastify";
+import {
+  createPost,
+  deletePost,
+  getAllPosts,
+  updatePost,
+} from "../../../redux/actions/posts";
 
 const { Option } = Select;
 
 const Posts = () => {
-  const [posts, setPosts] = useState([]);
+  const [title, setTitle] = useState("");
+  const [category, setCategory] = useState("");
+  const [author, setAuthor] = useState("");
+  const [content, setContent] = useState("");
+  const [metaKeywords, setMetaKeywords] = useState("");
+  const [metaDescription, setMetaDescription] = useState("");
+  const [image, setImage] = useState(null); // change initial state to null
+  const [avatar, setAvatar] = useState(""); // preview of image
+  const [currentImageBlob, setCurrentImageBlob] = useState(null); // store current image blob
+
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [initialData, setInitialData] = useState(null); // State to hold initial data for editing
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState(null); // State to hold Cloudinary image URL
+  const [editingPost, setEditingPost] = useState(null);
+
+  const { posts, loading, error, message } = useSelector(
+    (state) => state.posts
+  );
+  const dispatch = useDispatch();
+
+  const deleteHandler = (postId) => {
+    dispatch(deletePost(postId));
+  };
 
   // Fetch posts on component mount
   useEffect(() => {
-    fetchData();
-  }, []);
-
-  const fetchData = () => {
-    axios
-      .get("https://blogger-backend-p9yl.onrender.com/api/posts")
-      .then((response) => {
-        setPosts(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching posts:", error);
-      });
-  };
-
-  const handleAddPost = () => {
-    setIsModalVisible(true);
-    setInitialData(null); // Reset initialData when adding a new post
-    form.resetFields(); // Reset form fields
-    setImageUrl(null); // Reset imageUrl state
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setInitialData(null); // Reset initialData on modal close
-    form.resetFields(); // Reset form fields
-    setImageUrl(null); // Reset imageUrl state
-  };
-
-  const handleDelete = (id) => {
-    axios
-      .delete(`https://blogger-backend-p9yl.onrender.com/api/posts/${id}`)
-      .then((response) => {
-        console.log("Post deleted:", response.data);
-        fetchData(); // Refresh posts after delete
-        message.success("Post deleted successfully!");
-      })
-      .catch((error) => {
-        console.error("Error deleting post:", error);
-        message.error("Failed to delete post. Please try again.");
-      });
-  };
-
-  const handleEdit = (record) => {
-    console.log("Edit post:", record);
-    setIsModalVisible(true);
-    setInitialData(record); // Set initialData for editing
-    form.setFieldsValue(record); // Set form fields with initialData
-    setImageUrl(record.thumbnailImage); // Set imageUrl state with current thumbnailImage
-  };
-
-  // Handle form submission for add/update
-  const onFinish = (values) => {
-    setLoading(true);
-    const formData = new FormData();
-
-    Object.keys(values).forEach((key) => {
-      if (key === "thumbnailImage" && values[key]) {
-        formData.append("file", values[key].originFileObj);
-      } else {
-        formData.append(key, values[key]);
-      }
-    });
-
-    const apiUrl = initialData
-      ? `https://blogger-backend-p9yl.onrender.com/api/posts/${initialData._id}`
-      : "https://blogger-backend-p9yl.onrender.com/api/posts";
-    const axiosMethod = initialData ? axios.put : axios.post;
-
-    axiosMethod(apiUrl, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    })
-      .then((response) => {
-        console.log("Post saved:", response.data);
-        fetchData(); // Refresh posts after save
-        message.success("Post saved successfully!");
-        setLoading(false);
-        form.resetFields();
-        setIsModalVisible(false); // Close modal on save
-      })
-      .catch((error) => {
-        console.error("Error saving post:", error);
-        message.error("Failed to save post. Please try again.");
-        setLoading(false);
-      });
-  };
-
-  // Handle file upload validation
-  const beforeUpload = (file) => {
-    const isJpgOrPng = file.type === "image/jpeg" || file.type === "image/png";
-    if (!isJpgOrPng) {
-      message.error("Only JPG/PNG images are allowed!");
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
     }
-    return isJpgOrPng;
-  };
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
 
-  // Custom upload button for Ant Design Upload component
-  const uploadButton = (
-    <div>
-      <UploadOutlined />
-      <div style={{ marginTop: 8 }}>Upload</div>
-    </div>
-  );
+    dispatch(getAllPosts());
+  }, [dispatch, error, message]);
 
   const columns = [
+    {
+      title: "Sr.No",
+      dataIndex: "sno",
+      key: "sno",
+      render: (text, record, index) => index + 1,
+    },
     { title: "Title", dataIndex: "title", key: "title" },
     { title: "Category", dataIndex: "category", key: "category" },
     {
       title: "Featured",
       dataIndex: "thumbnailImage",
       key: "thumbnailImage",
-      render: (image) => (
-        <img
-          src={image}
-          alt="featured"
-          style={{ width: "50px", height: "50px" }}
+      render: (thumbnailImage) => (
+        <Image
+          width={50}
+          src={thumbnailImage?.url}
+          alt="Post Image"
+          fallback="https://via.placeholder.com/50"
         />
       ),
     },
-    { title: "Serial Number", dataIndex: "serialNumber", key: "serialNumber" },
     {
       title: "Actions",
       key: "actions",
@@ -154,7 +81,7 @@ const Posts = () => {
           <Button type="link" onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record._id)}>
+          <Button type="link" danger onClick={() => deleteHandler(record._id)}>
             Delete
           </Button>
         </span>
@@ -162,12 +89,92 @@ const Posts = () => {
     },
   ];
 
-  // Add selection column with checkboxes
-  const rowSelection = {
-    onChange: (selectedRowKeys, selectedRows) => {
-      console.log("selectedRowKeys:", selectedRowKeys);
-      console.log("selectedRows:", selectedRows);
-    },
+  const handleAddPost = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    form.resetFields();
+    setImage(null);
+    setAvatar("");
+    setCurrentImageBlob(null);
+    setEditingPost(null);
+  };
+
+  const imageHandler = (e) => {
+    const file = e.target.files[0];
+
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      setAvatar(reader.result); // just for preview on screen
+      setImage(file); // database ke liye file ka blob
+    };
+  };
+
+  const handleSave = async () => {
+    try {
+      const myForm = new FormData();
+      myForm.append("title", title);
+      myForm.append("category", category);
+      myForm.append("author", author);
+      myForm.append("content", content);
+      myForm.append("metaKeywords", metaKeywords);
+      myForm.append("metaDescription", metaDescription);
+      if (image) {
+        myForm.append("file", image);
+      } else if (currentImageBlob) {
+        myForm.append("file", currentImageBlob);
+      }
+
+      if (editingPost) {
+        // Update existing slider image
+        dispatch(updatePost(myForm, editingPost._id));
+      } else {
+        // Add new slider image
+        dispatch(createPost(myForm));
+      }
+
+      setIsModalVisible(false);
+      form.resetFields();
+      setImage(null);
+      setAvatar("");
+      setCurrentImageBlob(null);
+      setEditingPost(null);
+    } catch (error) {
+      console.error("Error saving Post:", error);
+    }
+  };
+
+  const handleEdit = (record) => {
+    setEditingPost(record);
+    setTitle(record.title);
+    setCategory(record.category);
+    setContent(record.content);
+    setAuthor(record.author);
+    setMetaKeywords(record.metaKeywords);
+    setMetaDescription(record.metaDescription);
+    setAvatar(record.thumbnailImage.url);
+
+    // Convert the URL to a blob
+    fetch(record.thumbnailImage.url)
+      .then((response) => response.blob())
+      .then((blob) => {
+        setCurrentImageBlob(blob);
+      });
+
+    setIsModalVisible(true);
+    form.setFieldsValue({
+      title: record.title,
+      category: record.category,
+      content: record.content,
+      author: record.author,
+      metaKeywords: record.metaKeywords,
+      metaDescription: record.metaDescription,
+    });
   };
 
   return (
@@ -190,77 +197,51 @@ const Posts = () => {
           <Table
             dataSource={posts}
             columns={columns}
-            rowSelection={{
-              type: "checkbox",
-              ...rowSelection,
-            }}
             pagination={{ pageSize: 10 }}
+            rowKey="_id"
+            defaultSortOrder="ascend"
           />
 
           {/* Modal for adding/editing post */}
           <Modal
-            title={initialData ? "Edit Post" : "Add Post"}
+            title={editingPost ? "Edit Post" : "Add Post"}
             visible={isModalVisible}
             onCancel={handleCancel}
             footer={[
               <Button key="cancel" onClick={handleCancel}>
                 Cancel
               </Button>,
-              <Button
-                key="submit"
-                type="primary"
-                loading={loading}
-                onClick={() => form.submit()}
-              >
-                {initialData ? "Update" : "Save"}
+              <Button key="save" type="primary" onClick={handleSave}>
+                Save
               </Button>,
             ]}
           >
-            <Form
-              form={form}
-              layout="vertical"
-              onFinish={onFinish}
-              initialValues={initialData}
-            >
+            <Form form={form} layout="vertical">
               <Form.Item
                 name="thumbnailImage"
-                label="Thumbnail Image"
-                valuePropName="fileList"
-                getValueFromEvent={(e) => {
-                  if (Array.isArray(e)) {
-                    return e;
-                  }
-                  return e && e.fileList;
-                }}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please upload a thumbnail image!",
-                  },
-                ]}
+                label="Post Image"
+                rules={[{ required: true, message: "Please upload an image!" }]}
               >
-                <Upload
-                  beforeUpload={beforeUpload}
-                  accept=".jpg,.png,.jpeg,.svg"
-                  maxCount={1}
-                  listType="picture-card"
-                  fileList={initialData ? [{ uid: "-1", url: imageUrl }] : []}
-                >
-                  {uploadButton}
-                </Upload>
-              </Form.Item>
-
-              <Form.Item
-                name="serialNumber"
-                label="Serial Number"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the serial number!",
-                  },
-                ]}
-              >
-                <Input type="number" placeholder="Enter Serial Number" />
+                <input
+                  id="chooseAvatar"
+                  name="chooseAvatar"
+                  type="file"
+                  accept="image/*"
+                  required={!editingPost}
+                  onChange={imageHandler}
+                  className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
+                />
+                {avatar && (
+                  <img
+                    src={avatar}
+                    alt="Post Image"
+                    style={{
+                      marginTop: "10px",
+                      width: "100px",
+                      height: "100px",
+                    }}
+                  />
+                )}
               </Form.Item>
 
               <Form.Item
@@ -268,7 +249,10 @@ const Posts = () => {
                 label="Title"
                 rules={[{ required: true, message: "Please enter the title!" }]}
               >
-                <Input placeholder="Enter Title" />
+                <Input
+                  onChange={(e) => setTitle(e.target.value)}
+                  placeholder="Enter Title"
+                />
               </Form.Item>
 
               <Form.Item
@@ -278,10 +262,17 @@ const Posts = () => {
                   { required: true, message: "Please select a category!" },
                 ]}
               >
-                <Select placeholder="Select a Category">
-                  <Option value="pizza">Pizza</Option>
-                  <Option value="cakes">Cakes</Option>
-                  <Option value="burger">Burger</Option>
+                <Select
+                  placeholder="Select a Category"
+                  onChange={(value) => setCategory(value)}
+                >
+                  <Option value="food">Food</Option>
+                  <Option value="travel">Travel</Option>
+                  <Option value="familyFun">Family & Fun</Option>
+                  <Option value="recipe">Recipe</Option>
+                  <Option value="events">Events</Option>
+                  <Option value="foundation">Foundation</Option>
+                  {/* Add more options as needed */}
                 </Select>
               </Form.Item>
 
@@ -295,7 +286,10 @@ const Posts = () => {
                   },
                 ]}
               >
-                <Input placeholder="Enter Author Name" />
+                <Input
+                  placeholder="Enter Author Name"
+                  onChange={(e) => setAuthor(e.target.value)}
+                />
               </Form.Item>
 
               <Form.Item
@@ -305,15 +299,26 @@ const Posts = () => {
                   { required: true, message: "Please enter the content!" },
                 ]}
               >
-                <Input.TextArea rows={6} placeholder="Enter Content" />
+                <Input.TextArea
+                  rows={6}
+                  placeholder="Enter Content"
+                  onChange={(e) => setContent(e.target.value)}
+                />
               </Form.Item>
 
               <Form.Item name="metaKeywords" label="Meta Keywords">
-                <Input placeholder="Enter Meta Keywords" />
+                <Input
+                  placeholder="Enter Meta Keywords"
+                  onChange={(e) => setMetaKeywords(e.target.value)}
+                />
               </Form.Item>
 
               <Form.Item name="metaDescription" label="Meta Description">
-                <Input.TextArea rows={4} placeholder="Enter Meta Description" />
+                <Input.TextArea
+                  rows={4}
+                  placeholder="Enter Meta Description"
+                  onChange={(e) => setMetaDescription(e.target.value)}
+                />
               </Form.Item>
             </Form>
           </Modal>
@@ -324,4 +329,3 @@ const Posts = () => {
 };
 
 export default Posts;
-//correct

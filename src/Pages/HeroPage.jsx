@@ -1,46 +1,88 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import heroImage from '../assets/HeroImage.png';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllSliderImages } from "../redux/actions/slider";
+import { clearError, clearMessage } from "../redux/reducers/sliderReducer";
+import { toast } from "react-toastify";
+import "./HeroPage.css";
+
 function HeroPage() {
+  const { sliders, loading, error, message } = useSelector(
+    (state) => state.slider
+  );
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
+
+    dispatch(getAllSliderImages());
+  }, [dispatch, error, message]);
+
+  if (!sliders) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <>
-     <div className="relative h-[585px] overflow-hidden">
-      <img
-        className="w-full h-full object-cover object-center absolute z-0"
-        src={heroImage}
-        alt="Hero Image"
-      />
-      <div className="relative z-10 flex flex-col justify-center items-center h-full px-4">
-        <h1 className="text-3xl font-bold text-white mb-4 text-center">Find your perfect spot to spend 
-        your weekend with your loved ones</h1>
-      <Link to="/food">
-          <button className="bg-green-500 mt-20 hover:bg-green-700 text-white py-2 px-4 rounded text-sm sm:text-base md:text-lg lg:text-xl mb-5">
-            <Link to="food">Book Now</Link>
-          </button>
-          
-          </Link>
-      
+    <div
+      id="carouselExampleCaptions"
+      className="carousel slide custom-carousel"
+      data-bs-ride="carousel"
+    >
+      <div className="carousel-indicators">
+        {sliders.map((slider, index) => (
+          <button
+            key={slider._id}
+            type="button"
+            data-bs-target="#carouselExampleCaptions"
+            data-bs-slide-to={index}
+            className={index === 0 ? "active" : ""}
+            aria-current={index === 0 ? "true" : "false"}
+            aria-label={`Slide ${index + 1}`}
+          ></button>
+        ))}
       </div>
-    </div>
-      {/* <div
-        className="relative w-full h-[585px] bg-cover bg-center object-cover mx-auto"
-        
-        style={{ backgroundImage: "url('../src/assets/HeroImage1.png')" }}
+      <div className="carousel-inner">
+        {sliders.map((slider, index) => (
+          <div
+            key={slider._id}
+            className={`carousel-item ${index === 0 ? "active" : ""}`}
+          >
+            <img
+              src={slider.thumbnailImage.url}
+              className="d-block w-100 custom-carousel-image"
+              alt={slider.title}
+            />
+            <div className="carousel-caption">
+              <h2>{slider.title}</h2>
+            </div>
+          </div>
+        ))}
+      </div>
+      <button
+        className="carousel-control-prev"
+        type="button"
+        data-bs-target="#carouselExampleCaptions"
+        data-bs-slide="prev"
       >
-        <div className="absolute inset-0 bg-black opacity-10"></div>
-        <div className="relative z-8 flex flex-col items-center justify-center h-full text-center text-white px-4 sm:px-8 md:px-16 lg:px-24  mx-auto">
-          <h3 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold mb-5">
-            Find your perfect spot to spend your weekend with your loved ones
-          </h3>
-          <Link to="/food">
-          <button className="bg-green-500 mt-20 hover:bg-green-700 text-white py-2 px-4 rounded text-sm sm:text-base md:text-lg lg:text-xl mb-5">
-            <Link to="food">Book Now</Link>
-          </button>
-          
-          </Link>
-        </div> */}
-      {/* </div> */}
-    </>
+        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Previous</span>
+      </button>
+      <button
+        className="carousel-control-next"
+        type="button"
+        data-bs-target="#carouselExampleCaptions"
+        data-bs-slide="next"
+      >
+        <span className="carousel-control-next-icon" aria-hidden="true"></span>
+        <span className="visually-hidden">Next</span>
+      </button>
+    </div>
   );
 }
 

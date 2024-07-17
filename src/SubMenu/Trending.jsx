@@ -1,12 +1,31 @@
-import React,{useState} from 'react'
+import React, { useState } from 'react';
 import Lunch from './Lunch';
+
 function Trending() {
-  
-    
-      const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 3; // Number of cards per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const cardsPerPage = 6; // Number of cards per page
 
   const cardsData = [
+    {
+      description: "Lorem Ipsum text lorem ipsum text....",
+      image: "./assets/lunch.png",
+    },
+    {
+      description: "Lorem Ipsum text lorem ipsum text....",
+      image: "./assets/lunch2.png",
+    },
+    {
+      description: "Lorem Ipsum text lorem ipsum text....",
+      image:"./assets/lunch.png",
+    },
+    {
+      description: "Lorem Ipsum text lorem ipsum text....",
+      image: "./assets/lunch.png",
+    },
+    {
+      description: "Lorem Ipsum text lorem ipsum text....",
+      image: "./assets/lunch.png",
+    },
     {
       description: "Lorem Ipsum text lorem ipsum text....",
       image: "./assets/lunch.png",
@@ -21,7 +40,7 @@ function Trending() {
     },
     {
       description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
+      image: "./assets/lunch2.png",
     },
     {
       description: "Lorem Ipsum text lorem ipsum text....",
@@ -41,21 +60,24 @@ function Trending() {
   }
 
   return (
-    <div className="container mx-auto">
-      <div className="relative z-10 flex flex-col justify-center items-center h-full px-4">
-        <h1 className="text-3xl font-bold text-white mb-4">Trending</h1>
+    <div className="container mx-auto px-4 py-6">
+      <div className=" mb-6">
+        <h1 className="text-3xl font-bold">Trending</h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 mt-3">
-        {currentCards.map((card) => (
-          <Lunch key={card.description} {...card} />
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6  ">
+        {currentCards.map((card, index) => (
+          <div key={index} className="w-[100%] h-74 overflow-hidden">
+            <Lunch {...card} />
+          </div>
         ))}
       </div>
-      <div className="flex justify-center mt-4">
+
+      <div className="flex justify-center ">
         {pageNumbers.map((number) => (
           <button
             key={number}
-            className={`px-2 py-1 text-gray-700 font-bold rounded-md hover:bg-gray-200 ${
+            className={`mx-1 px-3 py-1 text-gray-700 font-bold rounded-md hover:bg-gray-200 ${
               currentPage === number ? "bg-gray-200" : ""
             }`}
             onClick={() => paginate(number)}
@@ -65,7 +87,7 @@ function Trending() {
         ))}
       </div>
     </div>
-  )
+  );
 }
 
-export default Trending
+export default Trending;

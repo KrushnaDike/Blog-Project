@@ -1,0 +1,30 @@
+/* Carousel Indicators */
+.carousel-indicators [data-bs-target] {
+  border-radius: 100%;
+  width: 10px;
+  height: 10px;
+}
+
+/* Custom Carousel */
+.custom-carousel {
+  height: 80vh;
+  position: relative;
+}
+
+/* Custom Carousel Image */
+.custom-carousel-image {
+  height: 80vh;
+  object-fit: cover;
+}
+
+/* Carousel Caption */
+.carousel-caption {
+  background-color: rgba(0, 0, 0, 0.5);
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 24px;
+  font-family: "Arial, sans-serif";
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+}

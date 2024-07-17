@@ -1,61 +1,88 @@
-import React from 'react';
-
-const Awards = () => {
-  return (
-    <nav className="bg-gray-800 text-white px-4 py-2 flex justify-between items-center">
-      <a href="#" className="text-xl font-bold">Your Logo</a>
-      <div className="hidden md:flex items-center">
-        <input type="text" placeholder="Search" className="bg-gray-700 rounded-md px-3 py-2 mr-2 focus:outline-none focus:ring-2 focus:ring-blue-500" />
-        <button type="button" className="flex items-center">
-          <i className="fas fa-search text-white"></i>
-        </button>
+import React,{useState} from 'react'
+import TravelData from '../Components/TravelData';
+function Awards() {
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const cardsPerPage = 5; // Number of cards per page
+  
+    const cardsData = [
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/food.png",
+      },
+    
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/Recipe2.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/food.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/Recipe2.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/Recipe2.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/food.png",
+      },
+    
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/Recipe2.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/food.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/Recipe2.png",
+      },
+      {
+        title: "Lorem ipsum lorem ipsum lorem ipsum...",
+        image: "./assets/food.png",
+      },
+    ];
+  
+    const indexOfLastCard = currentPage * cardsPerPage;
+    const indexOfFirstCard = indexOfLastCard - cardsPerPage;
+    const currentCards = cardsData.slice(indexOfFirstCard, indexOfLastCard);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  
+    const pageNumbers = [];
+    for (let i = 1; i <= Math.ceil(cardsData.length / cardsPerPage); i++) {
+      pageNumbers.push(i);
+    }
+  
+    return (
+      <div className="container mx-auto">
+        <div className="text-[20px] font-bold mx-5 mt-3">Awards</div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 mt-3">
+          {currentCards.map((card, i) => (
+            <TravelData key={i+1} {...card} />
+          ))}
+        </div>
+        <div className="flex justify-center mt-4">
+          {pageNumbers.map((number) => (
+            <button
+              key={number}
+              className={`px-3 py-1 mx-1 text-gray-700 font-bold rounded-md hover:bg-gray-200 ${
+                currentPage === number ? "bg-gray-200" : ""
+              }`}
+              onClick={() => paginate(number)}
+            >
+              {number}
+            </button>
+          ))}
+        </div>
       </div>
-      <ul className="flex space-x-4 md:hidden">
-        <li>
-          <a href="#">
-            <i className="fab fa-facebook-f text-white"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i className="fab fa-youtube text-white"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i className="fab fa-twitter text-white"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i className="fab fa-whatsapp text-white"></i>
-          </a>
-        </li>
-      </ul>
-      <ul className="hidden md:flex space-x-4">
-        <li>
-          <a href="#">
-            <i className="fab fa-facebook-f text-white"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i className="fab fa-youtube text-white"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i className="fab fa-twitter text-white"></i>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <i className="fab fa-whatsapp text-white"></i>
-          </a>
-        </li>
-      </ul>
-    </nav>
-  );
-};
-
-export default Awards;
+    );
+  };
+  
+export default Awards

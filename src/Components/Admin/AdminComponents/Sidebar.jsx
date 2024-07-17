@@ -50,6 +50,12 @@ const Sidebar = () => {
           label: "Posts",
           to: "/admin/post-management/posts",
         },
+        {
+          key: "/admin/post-management/popup",
+          icon: <FileTextOutlined />,
+          label: "Popups",
+          to: "/admin/post-management/popup",
+        },
       ],
     },
     {

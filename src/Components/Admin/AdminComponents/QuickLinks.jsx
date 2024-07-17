@@ -1,97 +1,61 @@
 import React, { useState, useEffect } from "react";
-import { Table, Button, Modal, Form, Input, Select, message } from "antd";
-import axios from "axios";
+import { Table, Button, Modal, Form, Input, Select } from "antd";
+import { toast } from "react-toastify";
 import Layout from "./Layout";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  createQuickLink,
+  deleteQucikLink,
+  getAllQucikLinks,
+  updateQuickLink,
+} from "../../../redux/actions/quicklink";
+import {
+  clearError,
+  clearMessage,
+} from "../../../redux/reducers/quicklinkReducer";
 
 const { Option } = Select;
 
 const QuickLinks = () => {
-  const [quickLinks, setQuickLinks] = useState([]);
+  const [title, setTitle] = useState("");
+  const [language, setLanguage] = useState("");
+  const [url, setUrl] = useState("");
+
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [initialData, setInitialData] = useState(null);
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
+  const [editingQuickLink, setEditingQuickLink] = useState(null);
+
+  const { quicklinks, loading, error, message } = useSelector(
+    (state) => state.quicklink
+  );
+  const dispatch = useDispatch();
+
+  // console.log(quicklinks);
+
+  const deleteHandler = (sliderId) => {
+    dispatch(deleteQucikLink(sliderId));
+  };
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
 
-  const fetchData = () => {
-    axios
-      .get("https://blogger-backend-p9yl.onrender.com/api/quicklinks")
-      .then((response) => {
-        setQuickLinks(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching quick links:", error);
-        message.error("Failed to fetch quick links. Please try again.");
-      });
-  };
-
-  const handleAddLink = () => {
-    setIsModalVisible(true);
-    setInitialData(null);
-    form.resetFields();
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setInitialData(null);
-    form.resetFields();
-  };
-
-  const handleDelete = (id) => {
-    axios
-      .delete(`https://blogger-backend-p9yl.onrender.com/api/quicklinks/${id}`)
-      .then((response) => {
-        console.log("Quick link deleted:", response.data);
-        fetchData(); // Refresh table data after delete
-        message.success("Quick link deleted successfully!");
-      })
-      .catch((error) => {
-        console.error("Error deleting quick link:", error);
-        message.error("Failed to delete quick link. Please try again.");
-      });
-  };
-
-  const handleEdit = (record) => {
-    setIsModalVisible(true);
-    setInitialData(record);
-    form.setFieldsValue(record);
-  };
-
-  const onFinish = (values) => {
-    setLoading(true);
-
-    const apiUrl = initialData
-      ? `https://blogger-backend-p9yl.onrender.com/api/quicklinks/${initialData._id}`
-      : "https://blogger-backend-p9yl.onrender.com/api/quicklinks";
-    const axiosMethod = initialData ? axios.put : axios.post;
-
-    axiosMethod(apiUrl, values)
-      .then((response) => {
-        console.log("Quick link saved:", response.data);
-        fetchData(); // Refresh table data after save/update
-        message.success("Quick link saved successfully!");
-        setLoading(false);
-        form.resetFields();
-        setIsModalVisible(false);
-      })
-      .catch((error) => {
-        console.error("Error saving quick link:", error);
-        message.error("Failed to save quick link. Please try again.");
-        setLoading(false);
-      });
-  };
+    dispatch(getAllQucikLinks());
+  }, [dispatch, error, message]);
 
   const columns = [
     {
-      title: "Serial Number",
-      dataIndex: "serialNumber",
-      key: "serialNumber",
-      width: 100,
-      defaultSortOrder: "ascend",
-    }, // Decrease column width to 100px
+      title: "Sr.No",
+      dataIndex: "sno",
+      key: "sno",
+      render: (text, record, index) => index + 1,
+    },
     { title: "Title", dataIndex: "title", key: "title", width: 200 }, // Increase column width to 200px
     { title: "URL", dataIndex: "url", key: "url" },
     {
@@ -102,13 +66,62 @@ const QuickLinks = () => {
           <Button type="link" onClick={() => handleEdit(record)}>
             Edit
           </Button>
-          <Button type="link" danger onClick={() => handleDelete(record._id)}>
+          <Button type="link" danger onClick={() => deleteHandler(record._id)}>
             Delete
           </Button>
         </span>
       ),
     },
   ];
+
+  const handleAddQuickLink = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    form.resetFields();
+    setEditingQuickLink(null);
+  };
+
+  const handleSave = async () => {
+    try {
+      const myForm = new FormData();
+      myForm.append("title", title);
+      myForm.append("language", language);
+      myForm.append("url", url);
+
+      console.log(myForm);
+
+      if (editingQuickLink) {
+        // Update existing slider image
+        dispatch(updateQuickLink(myForm, editingQuickLink._id));
+      } else {
+        // Add new slider image
+        dispatch(createQuickLink(myForm));
+      }
+
+      setIsModalVisible(false);
+      form.resetFields();
+      setEditingQuickLink(null);
+    } catch (error) {
+      console.error("Error saving quick Link:", error);
+    }
+  };
+
+  const handleEdit = (record) => {
+    setEditingQuickLink(record);
+    setTitle(record.title);
+    setLanguage(record.language);
+    setUrl(record.url);
+
+    setIsModalVisible(true);
+    form.setFieldsValue({
+      title: record.title,
+      language: record.language,
+      url: record.url,
+    });
+  };
 
   return (
     <Layout>
@@ -122,12 +135,12 @@ const QuickLinks = () => {
           }}
         >
           <h2 className="font-bold">ALL QUICK LINKS</h2>
-          <Button type="primary" onClick={handleAddLink}>
+          <Button type="primary" onClick={handleAddQuickLink}>
             + Add Quick Link
           </Button>
         </div>
         <Table
-          dataSource={quickLinks}
+          dataSource={quicklinks}
           columns={columns}
           pagination={{ pageSize: 10 }}
           rowKey="_id"
@@ -135,35 +148,28 @@ const QuickLinks = () => {
         />
 
         <Modal
-          title={initialData ? "Edit Quick Link" : "Add Quick Link"}
+          title={editingQuickLink ? "Edit Quick Link" : "Add Quick Link"}
           visible={isModalVisible}
           onCancel={handleCancel}
           footer={[
             <Button key="cancel" onClick={handleCancel}>
               Cancel
             </Button>,
-            <Button
-              key="submit"
-              type="primary"
-              loading={loading}
-              onClick={() => form.submit()}
-            >
-              {initialData ? "Update" : "Save"}
+            <Button key="save" type="primary" onClick={handleSave}>
+              Save
             </Button>,
           ]}
         >
-          <Form
-            form={form}
-            layout="vertical"
-            onFinish={onFinish}
-            initialValues={initialData}
-          >
+          <Form form={form} layout="vertical">
             <Form.Item
               name="language"
               label="Language"
               rules={[{ required: true, message: "Please select a language!" }]}
             >
-              <Select placeholder="Select a Language">
+              <Select
+                placeholder="Select a Language"
+                onChange={(value) => setLanguage(value)}
+              >
                 <Option value="English">English</Option>
                 <Option value="Arabic">Arabic</Option>
                 <Option value="Spanish">Spanish</Option>
@@ -173,25 +179,22 @@ const QuickLinks = () => {
             <Form.Item
               name="title"
               label="Title"
-              rules={[{ required: true, message: "Please enter a title!" }]}
+              rules={[{ required: true, message: "Please enter the title!" }]}
             >
-              <Input />
+              <Input
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Enter Title"
+              />
             </Form.Item>
             <Form.Item
               name="url"
               label="URL"
-              rules={[{ required: true, message: "Please enter a URL!" }]}
+              rules={[{ required: true, message: "Please enter the url!" }]}
             >
-              <Input />
-            </Form.Item>
-            <Form.Item
-              name="serialNumber"
-              label="Serial Number"
-              rules={[
-                { required: true, message: "Please enter a serial number!" },
-              ]}
-            >
-              <Input type="number" />
+              <Input
+                onChange={(e) => setUrl(e.target.value)}
+                placeholder="Enter Url"
+              />
             </Form.Item>
           </Form>
         </Modal>

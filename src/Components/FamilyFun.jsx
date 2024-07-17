@@ -1,10 +1,22 @@
 import React from 'react'
-import Card from '../Pages/Card'
+import Navbar from '../Pages/Navbar';
+import Challenge from '../SubMenu/Challenge';
+import RahanVeg from '../SubMenu/RahanVeg';
+import OreeMummy from '../SubMenu/OreeMummy';
+import Footer from '../Pages/Footer';
+import Domestic from '../Pages/Domestic';
 function FamilyFun() {
   return (
     
-    <>
-    <Card/>
+    <> 
+    <div className='container mx-auto'>
+    <Navbar/>
+    <Domestic />
+    <Challenge/>
+    <RahanVeg/>
+    <OreeMummy/>
+    <Footer/>
+    </div>
     </>
   )
 }

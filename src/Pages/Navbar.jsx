@@ -1,19 +1,63 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 import facebook from "../assets/Facebook.png";
 import Instgram from "../assets/Instagram.png";
 import Twitter from "../assets/Twitter.png";
-import youtube from '../assets/youtube123.png';
-import calling from "../assets/Icon.png";
+import youtube from "../assets/youtube123.png";
+import mainlogo from "../assets/mainlogo.png";
+import { useDispatch, useSelector } from "react-redux";
+import { clearError, clearMessage } from "../redux/reducers/pagesReducer";
+import { getAllPages } from "../redux/actions/pages";
+import { toast } from "react-toastify";
+
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-const [active, setActive]=useState("food")
+  const [active, setActive] = useState("All");
+
+  const location = useLocation(); // Get the current location
+  useEffect(() => {
+    const path = location.pathname.split("/")[1]; // Get the first part of the path
+    setActive(path ? path.charAt(0).toUpperCase() + path.slice(1) : "All"); // Set active based on the path
+  }, [location]);
+
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
+
   const handleClick = (item) => {
-    setActive(item); // Update active state on menu item click
+    console.log(item);
+    setActive(item);
   };
+
+  const { pages, loading, error, message } = useSelector(
+    (state) => state.pages
+  );
+  const dispatch = useDispatch();
+
+  // Fetch pages on component mount
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
+
+    dispatch(getAllPages());
+  }, [dispatch, error, message]);
+
+  // console.log(pages);
+
+  // Function to format page title for URLs
+  const formatTitleForUrl = (title) => {
+    return title.replace(/ & /g, "").replace(/ /g, "").toLowerCase();
+  };
+
+  if (!pages) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -21,7 +65,7 @@ const [active, setActive]=useState("food")
         <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
           <Link to="/" className="flex items-center space-x-3">
             <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
-              Logo
+              <img src={mainlogo} alt="Logo"></img>
             </span>
           </Link>
           <div className="flex items-center space-x-6 rtl:space-x-reverse md:hidden">
@@ -91,17 +135,17 @@ const [active, setActive]=useState("food")
                 <img src={facebook} alt="facebook" />
               </a>
               <a href="#">
-                <img src={youtube} alt="you tube"/>
+                <img src={youtube} alt="you tube" />
               </a>
               <a href="#">
-                <img src={Instgram} alt="instgram"/>
+                <img src={Instgram} alt="instgram" />
               </a>
               <a href="#">
                 <img src={Twitter} alt="Twitter" className="w-1/2" />
               </a>
             </div>
-            <div
-              className={`flex flex-col space-y-4 md:hidden md:flex-grow md:justify-end ${
+            {/* <div
+              className={`flex flex-col space-y-4  md:hidden md:flex-grow md:justify-end ${
                 isOpen ? "block" : "hidden"
               }`}
             >
@@ -142,69 +186,122 @@ const [active, setActive]=useState("food")
               >
                 Foundation
               </Link>
-            </div>
+            </div> */}
           </div>
         </div>
       </nav>
-      <nav className="bg-green-200 flex justify-center items-center px-4 py-2 shadow-md">
-      <ul className="flex flex-row space-x-4">
-        <li
-          className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-            active === 'food' ? 'bg-green-700' : ''
-          }`}
-          onClick={() => handleClick('food')}
-        >
-          <Link to="/food">Food</Link>
-        </li>
-        <li
-          className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-            active === 'travel' ? 'bg-green-700' : ''
-          }`}
-          onClick={() => handleClick('travel')}
-        >
-          <Link to="/travel">Travel</Link>
-        </li>
-        <li
-          className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-            active === 'familyFun' ? 'bg-green-700' : ''
-          }`}
-          onClick={() => handleClick('familyFun')}
-        >
-          <Link to="/familyFun">Family & Fun</Link>
-        </li>
-        <li
-          className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-            active === 'recipe' ? 'bg-green-700' : ''
-          }`}
-          onClick={() => handleClick('recipe')}
-        >
-          <Link to="/recipe">Recipe</Link>
-        </li>
-        <li
-          className={`text-black-300 hover:text-underline hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-            active === 'events' ? 'bg-green-700' : ''
-          }`}
-          onClick={() => handleClick('events')}
-        >
-          <Link to="/events">Events</Link>
-        </li>
-        <li
-          className={`text-black-300 hover:text-underline hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-            active === 'foundation' ? 'bg-gray-700' : ''
-          }`}
-          onClick={() => handleClick('recipe')}
-        >
-          <Link to="/foundation">Foundation</Link>
-        </li>
 
-      </ul>
-      <div className="flex justify-end items-center w-1/2">
-        <Link to="/contactus" className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900">
-          Contact Us
-        </Link>
-       
-      </div>
-    </nav>
+      <nav className="bg-green-200 flex justify-center items-center px-4 py-2 shadow-md">
+        <ul className="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0">
+          <li
+            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "All" ? "bg-green-500" : ""
+            }`}
+            onClick={() => handleClick("food")}
+          >
+            <Link to="/">All</Link>
+          </li>
+
+          {pages.map((page) => (
+            <li
+              key={page._id}
+              className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+                active === page.title ? "bg-green-500" : ""
+              }`}
+              onClick={() => handleClick(page.title)}
+            >
+              <Link
+                to={`/${formatTitleForUrl(page.title.toLowerCase())}`}
+                state={{
+                  title: page.title,
+                  content: page.content,
+                  metaKeywords: page.metaKeywords,
+                  metaDescription: page.metaDescription,
+                }}
+                onClick={() => handleClick(page.title)}
+              >
+                {page.title}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <div className="flex justify-end items-center w-1/2">
+          <Link
+            to="/contactus"
+            className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900"
+          >
+            Contact Us
+          </Link>
+        </div>
+      </nav>
+
+      {/* Previous code */}
+      {/* <nav className="bg-green-200 flex justify-center items-center px-4 py-2 shadow-md">
+        <ul className="flex flex-row space-x-4">
+          <li
+            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "food" ? "bg-green-500" : ""
+            }`}
+            onClick={() => handleClick("food")}
+          >
+            <Link to="/food">Food</Link>
+          </li>
+
+          <li
+            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "travel" ? "bg-green-500" : ""
+            }`}
+            onClick={() => handleClick("travel")}
+          >
+            <Link to="/travel">Travel</Link>
+          </li>
+
+          <li
+            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "familyFun" ? "bg-green-500" : ""
+            }`}
+            onClick={() => handleClick("familyFun")}
+          >
+            <Link to="/familyFun">Family & Fun</Link>
+          </li>
+
+          <li
+            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "recipe" ? "bg-green-500" : ""
+            }`}
+            onClick={() => handleClick("recipe")}
+          >
+            <Link to="/recipe">Recipe</Link>
+          </li>
+
+          <li
+            className={`text-black-300 hover:text-underline hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "events" ? "bg-green-700" : ""
+            }`}
+            onClick={() => handleClick("events")}
+          >
+            <Link to="/events">Events</Link>
+          </li>
+
+          <li
+            className={`text-black-300 hover:text-underline hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+              active === "foundation" ? "bg-green-500" : ""
+            }`}
+            onClick={() => handleClick("recipe")}
+          >
+            <Link to="/foundation">Foundation</Link>
+          </li>
+        </ul>
+        <div className="flex justify-end items-center w-1/2">
+          <Link
+            to="/contactus"
+            className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900"
+          >
+            Contact Us
+          </Link>
+        </div>
+      </nav> */}
+
       {/* <nav class="bg-green-200 dark:bg-gray-700">
         <div class="max-w-screen-xl px-4 py-3 mx-auto">
           <div class="flex justify-end items-center">

@@ -45,8 +45,8 @@ const Category = () => {
     <div className="flex flex-col items-center px-4 py-8">
       <h2 className="text-xl font-semibold mb-4 text-start">Exploring the hidden places in Uttarakhand</h2>
       <div className="flex flex-wrap justify-center gap-4">
-        {displayedCategories.map((category) => (
-          <div key={category} className="relative cursor-pointer">
+        {displayedCategories.map((category, index) => (
+          <div key={index} className="relative cursor-pointer">
             <div
               className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center"
               onClick={() => handleCategoryClick(category)}

@@ -93,14 +93,14 @@ function App() {
     <>
       <Router>
         <Routes>
-          <Route
+          {/* <Route
             path="/login"
             element={
               <ProtectedRoute isAuthenticated={!isAuthenticated}>
                 <Login />
               </ProtectedRoute>
             }
-          />
+          /> */}
 
           {user && user.role === "admin" ? (
             <>
@@ -192,6 +192,14 @@ function App() {
           ) : (
             <>
               {/* All accessable routes */}
+              <Route
+                path="/login"
+                element={
+                  <ProtectedRoute isAuthenticated={!isAuthenticated}>
+                    <Login />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/"
                 element={<Home user={user} isAuthenticated={isAuthenticated} />}

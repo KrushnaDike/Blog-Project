@@ -10,6 +10,7 @@ import {
   getAllAds,
   updateAd,
 } from "../../../redux/actions/ads";
+import Loader from "../../Layout/Loader/Loader.jsx";
 
 const AdminAds = () => {
   const [title, setTitle] = useState("");
@@ -155,96 +156,108 @@ const AdminAds = () => {
 
   return (
     <Layout>
-      <div className="flex-1 p-5 bg-white">
-        <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1rem",
-            }}
-          >
-            <h2 className="font-bold">ALL ADS</h2>
-            <Button type="primary" onClick={handleAddAd}>
-              + Add Ad
-            </Button>
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="flex-1 p-5 bg-white">
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "1rem",
+                }}
+              >
+                <h2 className="font-bold">ALL ADS</h2>
+                <Button type="primary" onClick={handleAddAd}>
+                  + Add Ad
+                </Button>
+              </div>
+              <Table
+                dataSource={ads}
+                columns={columns}
+                pagination={{ pageSize: 10 }}
+                rowKey="_id"
+                defaultSortOrder="ascend"
+              />
+
+              {/* Modal for adding/editing ad */}
+              <Modal
+                title={editingAd ? "Edit Ad" : "Add Ad"}
+                visible={isModalVisible}
+                onCancel={handleCancel}
+                footer={[
+                  <Button key="cancel" onClick={handleCancel}>
+                    Cancel
+                  </Button>,
+                  <Button key="save" type="primary" onClick={handleSave}>
+                    Save
+                  </Button>,
+                ]}
+              >
+                <Form form={form} layout="vertical">
+                  <Form.Item
+                    name="thumbnailImage"
+                    label="Ad Image"
+                    rules={[
+                      { required: true, message: "Please upload an image!" },
+                    ]}
+                  >
+                    <input
+                      id="chooseAvatar"
+                      name="chooseAvatar"
+                      type="file"
+                      accept="image/*"
+                      required={!editingAd}
+                      onChange={imageHandler}
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
+                    />
+                    {avatar && (
+                      <img
+                        src={avatar}
+                        alt="Ad Image"
+                        style={{
+                          marginTop: "10px",
+                          width: "100px",
+                          height: "100px",
+                        }}
+                      />
+                    )}
+                  </Form.Item>
+
+                  <Form.Item
+                    name="title"
+                    label="Title"
+                    rules={[
+                      { required: true, message: "Please enter the title!" },
+                    ]}
+                  >
+                    <Input
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter Title"
+                    />
+                  </Form.Item>
+
+                  <Form.Item
+                    name="link"
+                    label="Link"
+                    rules={[
+                      { required: true, message: "Please enter the link!" },
+                    ]}
+                  >
+                    <Input
+                      onChange={(e) => setLink(e.target.value)}
+                      placeholder="Enter Link"
+                    />
+                  </Form.Item>
+                </Form>
+              </Modal>
+            </div>
           </div>
-          <Table
-            dataSource={ads}
-            columns={columns}
-            pagination={{ pageSize: 10 }}
-            rowKey="_id"
-            defaultSortOrder="ascend"
-          />
-
-          {/* Modal for adding/editing ad */}
-          <Modal
-            title={editingAd ? "Edit Ad" : "Add Ad"}
-            visible={isModalVisible}
-            onCancel={handleCancel}
-            footer={[
-              <Button key="cancel" onClick={handleCancel}>
-                Cancel
-              </Button>,
-              <Button key="save" type="primary" onClick={handleSave}>
-                Save
-              </Button>,
-            ]}
-          >
-            <Form form={form} layout="vertical">
-              <Form.Item
-                name="thumbnailImage"
-                label="Ad Image"
-                rules={[{ required: true, message: "Please upload an image!" }]}
-              >
-                <input
-                  id="chooseAvatar"
-                  name="chooseAvatar"
-                  type="file"
-                  accept="image/*"
-                  required={!editingAd}
-                  onChange={imageHandler}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
-                />
-                {avatar && (
-                  <img
-                    src={avatar}
-                    alt="Ad Image"
-                    style={{
-                      marginTop: "10px",
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
-                name="title"
-                label="Title"
-                rules={[{ required: true, message: "Please enter the title!" }]}
-              >
-                <Input
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter Title"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="link"
-                label="Link"
-                rules={[{ required: true, message: "Please enter the link!" }]}
-              >
-                <Input
-                  onChange={(e) => setLink(e.target.value)}
-                  placeholder="Enter Link"
-                />
-              </Form.Item>
-            </Form>
-          </Modal>
-        </div>
-      </div>
+        </>
+      )}
     </Layout>
   );
 };

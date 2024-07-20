@@ -4,6 +4,7 @@ import { getAllSliderImages } from "../redux/actions/slider";
 import { clearError, clearMessage } from "../redux/reducers/sliderReducer";
 import { toast } from "react-toastify";
 import "./HeroPage.css";
+import Loader from "../Components/Layout/Loader/Loader";
 
 function HeroPage() {
   const { sliders, loading, error, message } = useSelector(
@@ -24,8 +25,8 @@ function HeroPage() {
     dispatch(getAllSliderImages());
   }, [dispatch, error, message]);
 
-  if (!sliders) {
-    return <div>Loading...</div>;
+  if (!sliders || loading) {
+    return <Loader />;
   }
 
   return (

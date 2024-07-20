@@ -9,9 +9,7 @@ import FamilyFun from "./Components/FamilyFun";
 import Recipe from "./Components/Recipe";
 import Events from "./Components/Events";
 import Foundation from "./Components/Foundation";
-import ContactUs from "./Components/ContactUs";
 import MainLayout from "./Pages/MainLayout";
-import PageNotFound from "./Pages/PageNotFound";
 import LunchwithStar from "./SubMenu/LunchwithStar";
 import NonVeg from "./SubMenu/NonVeg";
 import Veg from "./SubMenu/Veg";
@@ -37,6 +35,7 @@ import Category from "./Pages/Category";
 import Domestic from "./Pages/Domestic";
 import DynamicPage from "./Pages/DynamicPage";
 import RecipeDataCook from "./Components/RecipeDataCook";
+import PageNotFound from "./Components/Layout/NotFound/PageNotFound.jsx";
 
 // Admin dashboard
 import Admin from "./Components/Admin/Admin";
@@ -57,6 +56,9 @@ import "react-toastify/dist/ReactToastify.css";
 import { getAllSliderImages } from "./redux/actions/slider";
 import Popups from "./Components/Admin/AdminComponents/Popups";
 import AdminAds from "./Components/Admin/AdminComponents/AdminAds";
+import Loader from "./Components/Layout/Loader/Loader.jsx";
+import Navbar from "./Pages/Navbar.jsx";
+import UserMessages from "./Components/Admin/AdminComponents/UserMessages.jsx";
 
 function App() {
   const { isAuthenticated, user, error, message, loading } = useSelector(
@@ -82,6 +84,10 @@ function App() {
   }, [dispatch, message, sliderMessage]);
 
   // console.log(user);
+
+  if (loading) {
+    return <Loader />;
+  }
 
   return (
     <>
@@ -122,6 +128,7 @@ function App() {
                 path="/admin/user-management"
                 element={<UserManagement />}
               />
+              <Route path="/admin/user-messages" element={<UserMessages />} />
             </>
           ) : isAuthenticated ? (
             <>
@@ -167,7 +174,65 @@ function App() {
               </Route>
 
               <Route path="/events" element={<Events />} />
-              <Route path="/contactus" element={<ContactUs />} />
+              <Route path="/ads" element={<Ads />} />
+              <Route path="/card" element={<Card />} />
+              <Route path="/recipeData" element={<RecipeData />} />
+              <Route path="/travelData" element={<TravelData />} />
+              <Route path="/lunch" element={<Lunch />} />
+              <Route path="/cardList" element={<CardList />} />
+              <Route path="/showMore" element={<ShowMore />} />
+              <Route path="/domestic" element={<Domestic />} />
+              <Route path="/recipedatacook" element={<RecipeDataCook />} />
+              <Route path="/foundation" element={<Foundation />} />
+
+              <Route path="/:title" element={<DynamicPage />} />
+
+              <Route path="*" element={<PageNotFound />} />
+            </>
+          ) : (
+            <>
+              {/* All accessable routes */}
+              <Route
+                path="/"
+                element={<Home user={user} isAuthenticated={isAuthenticated} />}
+              />
+              <Route path="food" element={<Food />}>
+                <Route path="/food/restaruant" element={<Restaurant />}></Route>
+                <Route path="/food/streetfood" element={<StreetFood />}></Route>
+                <Route
+                  path="/food/lunchWithStar"
+                  element={<LunchwithStar />}
+                ></Route>
+              </Route>
+
+              <Route path="/travel" element={<Travel />}>
+                <Route path="/travel/spiritual" element={<Spiritual />}></Route>
+                <Route path="/travel/national" element={<National />}></Route>
+                <Route
+                  path="/travel/international"
+                  element={<International />}
+                ></Route>
+                <Route path="travel/category" element={<Category />} />
+              </Route>
+              <Route path="/familyfun" element={<FamilyFun />}>
+                <Route path="/familyfun/challenge" element={<Challenge />} />
+                <Route path="/familyfun/rahanVeg" element={<RahanVeg />} />
+                <Route path="/familyfun/oreeMummy" element={<OreeMummy />} />
+              </Route>
+              <Route path="/recipe" element={<Recipe />}>
+                <Route path="/recipe/veg" element={<Veg />} />
+                <Route path="/recipe/nonVeg" element={<NonVeg />} />
+              </Route>
+              <Route path="/quickLink" element={<QuickLink />}>
+                <Route
+                  path="/quickLink/womenEmpowerment"
+                  element={<WomenEmpowerment />}
+                />
+                <Route path="/quickLink/award" element={<Awards />} />
+                <Route path="/quickLink/foundation" element={<Foundation />} />
+              </Route>
+
+              <Route path="/events" element={<Events />} />
               <Route path="/ads" element={<Ads />} />
               <Route path="/card" element={<Card />} />
               <Route path="/recipeData" element={<RecipeData />} />
@@ -182,15 +247,6 @@ function App() {
               {/* Dynamic Route */}
               <Route path="/:title" element={<DynamicPage />} />
 
-              <Route path="*" element={<PageNotFound />} />
-            </>
-          ) : (
-            <>
-              {/* All accessable routes */}
-              <Route
-                path="/"
-                element={<Home user={user} isAuthenticated={isAuthenticated} />}
-              />
               <Route path="*" element={<PageNotFound />} />
             </>
           )}

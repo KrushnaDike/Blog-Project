@@ -9,7 +9,7 @@ import {
   MenuOutlined,
   CloseOutlined,
   UserOutlined,
-  UserAddOutlined,
+  MessageOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Button } from "antd";
 import Blogger from "../../../assets/Blogger.png";
@@ -107,6 +107,12 @@ const Sidebar = () => {
       icon: <UserOutlined />,
       label: "User Management",
       to: "/admin/user-management",
+    },
+    {
+      key: "/admin/user-messages",
+      icon: <MessageOutlined />,
+      label: "User Messages",
+      to: "/admin/user-messages",
     },
   ];
 

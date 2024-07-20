@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Table, Button, Modal, Form, Input, Select } from "antd";
 import { toast } from "react-toastify";
 import Layout from "./Layout";
@@ -13,6 +13,7 @@ import {
   clearError,
   clearMessage,
 } from "../../../redux/reducers/quicklinkReducer";
+import Loader from "../../Layout/Loader/Loader";
 
 const { Option } = Select;
 
@@ -125,80 +126,94 @@ const QuickLinks = () => {
 
   return (
     <Layout>
-      <div className="flex-1 p-5 bg-white">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <h2 className="font-bold">ALL QUICK LINKS</h2>
-          <Button type="primary" onClick={handleAddQuickLink}>
-            + Add Quick Link
-          </Button>
-        </div>
-        <Table
-          dataSource={quicklinks}
-          columns={columns}
-          pagination={{ pageSize: 10 }}
-          rowKey="_id"
-          defaultSortOrder="ascend"
-        />
-
-        <Modal
-          title={editingQuickLink ? "Edit Quick Link" : "Add Quick Link"}
-          visible={isModalVisible}
-          onCancel={handleCancel}
-          footer={[
-            <Button key="cancel" onClick={handleCancel}>
-              Cancel
-            </Button>,
-            <Button key="save" type="primary" onClick={handleSave}>
-              Save
-            </Button>,
-          ]}
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item
-              name="language"
-              label="Language"
-              rules={[{ required: true, message: "Please select a language!" }]}
-            >
-              <Select
-                placeholder="Select a Language"
-                onChange={(value) => setLanguage(value)}
+      <Fragment>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="flex-1 p-5 bg-white">
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "1rem",
+                }}
               >
-                <Option value="English">English</Option>
-                <Option value="Arabic">Arabic</Option>
-                <Option value="Spanish">Spanish</Option>
-                {/* Add more options as needed */}
-              </Select>
-            </Form.Item>
-            <Form.Item
-              name="title"
-              label="Title"
-              rules={[{ required: true, message: "Please enter the title!" }]}
-            >
-              <Input
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter Title"
+                <h2 className="font-bold">ALL QUICK LINKS</h2>
+                <Button type="primary" onClick={handleAddQuickLink}>
+                  + Add Quick Link
+                </Button>
+              </div>
+              <Table
+                dataSource={quicklinks}
+                columns={columns}
+                pagination={{ pageSize: 10 }}
+                rowKey="_id"
+                defaultSortOrder="ascend"
               />
-            </Form.Item>
-            <Form.Item
-              name="url"
-              label="URL"
-              rules={[{ required: true, message: "Please enter the url!" }]}
-            >
-              <Input
-                onChange={(e) => setUrl(e.target.value)}
-                placeholder="Enter Url"
-              />
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
+
+              <Modal
+                title={editingQuickLink ? "Edit Quick Link" : "Add Quick Link"}
+                visible={isModalVisible}
+                onCancel={handleCancel}
+                footer={[
+                  <Button key="cancel" onClick={handleCancel}>
+                    Cancel
+                  </Button>,
+                  <Button key="save" type="primary" onClick={handleSave}>
+                    Save
+                  </Button>,
+                ]}
+              >
+                <Form form={form} layout="vertical">
+                  <Form.Item
+                    name="language"
+                    label="Language"
+                    rules={[
+                      { required: true, message: "Please select a language!" },
+                    ]}
+                  >
+                    <Select
+                      placeholder="Select a Language"
+                      onChange={(value) => setLanguage(value)}
+                    >
+                      <Option value="English">English</Option>
+                      <Option value="Arabic">Arabic</Option>
+                      <Option value="Spanish">Spanish</Option>
+                      {/* Add more options as needed */}
+                    </Select>
+                  </Form.Item>
+                  <Form.Item
+                    name="title"
+                    label="Title"
+                    rules={[
+                      { required: true, message: "Please enter the title!" },
+                    ]}
+                  >
+                    <Input
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Enter Title"
+                    />
+                  </Form.Item>
+                  <Form.Item
+                    name="url"
+                    label="URL"
+                    rules={[
+                      { required: true, message: "Please enter the url!" },
+                    ]}
+                  >
+                    <Input
+                      onChange={(e) => setUrl(e.target.value)}
+                      placeholder="Enter Url"
+                    />
+                  </Form.Item>
+                </Form>
+              </Modal>
+            </div>
+          </>
+        )}
+      </Fragment>
     </Layout>
   );
 };

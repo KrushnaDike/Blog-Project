@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { clearError, clearMessage } from "../redux/reducers/adReducer";
 import { getAllAds } from "../redux/actions/ads";
+import Loader from "./Layout/Loader/Loader";
 // import "./Ads.css";
 
 const Ads = () => {
@@ -25,8 +26,12 @@ const Ads = () => {
     dispatch(getAllAds());
   }, [dispatch, error, message]);
 
-  if (!ads) {
-    return <div>Loading...</div>;
+  if (loading || !ads) {
+    return (
+      <div className="ads-container p-4">
+        <Loader />
+      </div>
+    );
   }
 
   // console.log(ads);

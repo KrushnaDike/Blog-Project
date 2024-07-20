@@ -9,10 +9,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearError, clearMessage } from "../redux/reducers/pagesReducer";
 import { getAllPages } from "../redux/actions/pages";
 import { toast } from "react-toastify";
+import Loader from "../Components/Layout/Loader/Loader";
+import Contact from "../Components/Contact/Contact";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState("All");
+  const [showContact, setShowContact] = useState(false);
 
   const location = useLocation();
   useEffect(() => {
@@ -49,19 +52,67 @@ const Navbar = () => {
     return title.replace(/ & /g, "").replace(/ /g, "").toLowerCase();
   };
 
-  if (!pages) {
-    return <div>Loading...</div>;
+  if (!pages || loading) {
+    return <Loader />;
   }
 
   return (
     <>
-      <nav className="bg-green-100 border-gray-200 dark:bg-gray-900">
-        <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl p-4">
-          <Link to="/" className="flex items-center space-x-3">
-            <img src={mainlogo} alt="Logo" className="h-10" />
-          </Link>
-          <div className="flex items-center space-x-6 md:hidden">
-            <button onClick={toggleMenu} className="focus:outline-none">
+      <nav className="bg-green-200 px-4 py-2 shadow-md">
+        <div className="container mx-auto flex justify-between items-center px-4 py-2">
+          {/* Logo */}
+          <div className="flex items-center">
+            <Link to="/" className="flex items-center">
+              <img src={mainlogo} alt="Logo" className="h-10 w-auto" />
+            </Link>
+          </div>
+
+          {/* Right-aligned Links and Button */}
+          <div className="flex-grow flex justify-end items-center space-x-8">
+            <div className="hidden md:flex justify-center items-center space-x-8">
+              <Link
+                to="/"
+                className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+                  active === "All" ? "bg-green-500 text-white" : ""
+                }`}
+                onClick={() => handleClick("All")}
+              >
+                Home
+              </Link>
+
+              {pages.map((page) => (
+                <Link
+                  key={page._id}
+                  to={`/${formatTitleForUrl(page.title.toLowerCase())}`}
+                  state={{
+                    title: page.title,
+                    content: page.content,
+                    metaKeywords: page.metaKeywords,
+                    metaDescription: page.metaDescription,
+                  }}
+                  className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+                    active === page.title ? "bg-green-500 text-white" : ""
+                  }`}
+                  onClick={() => handleClick(page.title)}
+                >
+                  {page.title}
+                </Link>
+              ))}
+            </div>
+
+            <div className="hidden md:flex items-center space-x-4">
+              <button
+                onClick={() => setShowContact(true)}
+                className="text-white hover:text-black px-4 py-2 bg-green-900 rounded"
+              >
+                Contact Us
+              </button>
+            </div>
+
+            <button
+              onClick={toggleMenu}
+              className="md:hidden flex items-center focus:outline-none"
+            >
               {isOpen ? (
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -95,93 +146,52 @@ const Navbar = () => {
               )}
             </button>
           </div>
-          <div className="flex items-center space-x-6 rtl:space-x-reverse">
-            <div className="flex items-center w-full md:w-auto">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                className="h-6 w-6 mr-2 text-gray-500"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
-              </svg>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="focus:outline-none rounded-full focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 bg-white px-3 py-2 w-full md:w-80"
-              />
-            </div>
+        </div>
 
-            <div
-              className={`flex items-center space-x-4 rtl:space-x-reverse md:flex md:flex-grow md:justify-end 
-              ${isOpen ? "block" : "hidden"}`}
-            >
-              <a href="#">
-                <img src={facebook} alt="facebook" />
-              </a>
-              <a href="#">
-                <img src={youtube} alt="you tube" />
-              </a>
-              <a href="#">
-                <img src={Instgram} alt="instgram" />
-              </a>
-              <a href="#">
-                <img src={Twitter} alt="Twitter" className="w-1/2" />
-              </a>
+        {/* Mobile Menu */}
+        {isOpen && (
+          <div className="md:hidden bg-green-200">
+            <div className="flex flex-col space-y-2 p-4">
+              <Link
+                to="/"
+                className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+                  active === "All" ? "bg-green-500 text-white" : ""
+                }`}
+                onClick={() => handleClick("All")}
+              >
+                Home
+              </Link>
+
+              {pages.map((page) => (
+                <Link
+                  key={page._id}
+                  to={`/${formatTitleForUrl(page.title.toLowerCase())}`}
+                  state={{
+                    title: page.title,
+                    content: page.content,
+                    metaKeywords: page.metaKeywords,
+                    metaDescription: page.metaDescription,
+                  }}
+                  className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
+                    active === page.title ? "bg-green-500 text-white" : ""
+                  }`}
+                  onClick={() => handleClick(page.title)}
+                >
+                  {page.title}
+                </Link>
+              ))}
+              <button
+                onClick={() => setShowContact(true)}
+                className="text-white hover:text-black px-4 py-2 bg-green-900 rounded"
+              >
+                Contact Us
+              </button>
             </div>
           </div>
-        </div>
+        )}
       </nav>
 
-      <nav className="bg-green-200 flex justify-center items-center px-4 py-2 shadow-md">
-        <ul className="flex flex-col mt-4 md:flex-row md:space-x-8 md:mt-0">
-          <li
-            className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-              active === "All" ? "bg-green-500 text-white" : ""
-            }`}
-            onClick={() => handleClick("All")}
-          >
-            <Link to="/">Home</Link>
-          </li>
-
-          {pages.map((page) => (
-            <li
-              key={page._id}
-              className={`text-black-300 hover:text-black cursor-pointer px-2 py-1 rounded-md ${
-                active === page.title ? "bg-green-500 text-white" : ""
-              }`}
-              onClick={() => handleClick(page.title)}
-            >
-              <Link
-                to={`/${formatTitleForUrl(page.title.toLowerCase())}`}
-                state={{
-                  title: page.title,
-                  content: page.content,
-                  metaKeywords: page.metaKeywords,
-                  metaDescription: page.metaDescription,
-                }}
-                onClick={() => handleClick(page.title)}
-              >
-                {page.title}
-              </Link>
-            </li>
-          ))}
-        </ul>
-        <div className="flex justify-end items-center w-1/2">
-          <Link
-            to="/contactus"
-            className="text-white hover:text-black mr-4 px-4 py-2 bg-green-900 rounded"
-          >
-            Contact Us
-          </Link>
-        </div>
-      </nav>
+      <Contact show={showContact} onClose={() => setShowContact(false)} />
     </>
   );
 };

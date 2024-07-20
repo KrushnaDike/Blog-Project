@@ -17,8 +17,8 @@ import Domestic from "./Domestic";
 function MainLayout({ sliders }) {
   return (
     <div className="container mx-auto">
-      <HeroPage />
       <Navbar />
+      <HeroPage />
       <Domestic />
       <Ads />
       <Restaurant />

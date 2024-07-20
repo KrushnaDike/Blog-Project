@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import Lunch from './Lunch';
+import React, { useState } from "react";
+import YouTubeShort from "../Components/YouTubeShort";
 
 function Trending() {
   const [currentPage, setCurrentPage] = useState(1);
@@ -7,45 +7,34 @@ function Trending() {
 
   const cardsData = [
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
+      description: "Short 1 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch2.png",
+      description: "Short 2 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image:"./assets/lunch.png",
+      description: "Short 2 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
+      description: "Short 2 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
+      description: "Short 2 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
+      description: "Short 2 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
     {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch2.png",
+      description: "Short 2 Description",
+      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
     },
-    {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
-    },
-    {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch2.png",
-    },
-    {
-      description: "Lorem Ipsum text lorem ipsum text....",
-      image: "./assets/lunch.png",
-    },
+    // Add more YouTube Shorts
   ];
 
   const indexOfLastCard = currentPage * cardsPerPage;
@@ -65,15 +54,15 @@ function Trending() {
         <h1 className="text-3xl font-bold">Trending</h1>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6  ">
+      <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {currentCards.map((card, index) => (
-          <div key={index} className="w-[100%] h-74 overflow-hidden">
-            <Lunch {...card} />
+          <div key={index} className="w-full">
+            <YouTubeShort {...card} />
           </div>
         ))}
       </div>
 
-      <div className="flex justify-center ">
+      <div className="flex justify-center mt-4">
         {pageNumbers.map((number) => (
           <button
             key={number}

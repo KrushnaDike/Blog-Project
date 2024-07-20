@@ -8,6 +8,7 @@ import { getAllPosts, getRecentFourPosts } from "../redux/actions/posts";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, clearMessage } from "../redux/reducers/postsReducer";
 import { toast } from "react-toastify";
+import Loader from "../Components/Layout/Loader/Loader";
 
 function Domestic() {
   const { posts, loading, error, message } = useSelector(
@@ -19,8 +20,6 @@ function Domestic() {
 
   // Extracting the page title from the location state
   const { title: pageTitle } = location.state || {};
-
-  console.log(pageTitle);
 
   useEffect(() => {
     if (error) {
@@ -39,8 +38,8 @@ function Domestic() {
     }
   }, [dispatch, error, message]);
 
-  if (!posts) {
-    return <div>Loading...</div>;
+  if (!posts || loading) {
+    return <Loader />;
   }
 
   return (

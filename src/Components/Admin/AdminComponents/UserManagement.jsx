@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Table, Button, Modal, Form, Input, Select, Image } from "antd";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { deleteUser, getAllUsers } from "../../../redux/actions/admin";
 import { clearError, clearMessage } from "../../../redux/reducers/adminReducer";
 import { register, updateUser } from "../../../redux/actions/user";
+import Loader from "../../Layout/Loader/Loader";
 
 const UserManagement = () => {
   const [name, setName] = useState("");
@@ -164,126 +165,142 @@ const UserManagement = () => {
 
   return (
     <Layout>
-      <div className="flex-1 p-5 bg-white">
-        <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1rem",
-            }}
-          >
-            <h2 className="font-bold">ALL USERS</h2>
-            <Button type="primary" onClick={handleAddUser}>
-              + Add User
-            </Button>
-          </div>
-          <Table dataSource={users} columns={columns} />
+      <Fragment>
+        {!users ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="flex-1 p-5 bg-white">
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <h2 className="font-bold">ALL USERS</h2>
+                  <Button type="primary" onClick={handleAddUser}>
+                    + Add User
+                  </Button>
+                </div>
+                <Table dataSource={users} columns={columns} />
 
-          <Modal
-            title={editingUser ? "Edit User" : "Add User"}
-            visible={isModalVisible}
-            onCancel={handleCancel}
-            footer={[
-              <Button key="cancel" onClick={handleCancel}>
-                Cancel
-              </Button>,
-              <Button key="save" type="primary" onClick={handleSave}>
-                Save
-              </Button>,
-            ]}
-          >
-            <Form form={form} layout="vertical">
-              <Form.Item
-                name="name"
-                label="Name"
-                rules={[
-                  { required: true, message: "Please enter the user name" },
-                ]}
-              >
-                <Input
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter Name"
-                />
-              </Form.Item>
-              <Form.Item
-                name="email"
-                label="Email"
-                rules={[
-                  { required: true, message: "Please enter the user's email" },
-                ]}
-              >
-                <Input
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter Email"
-                />
-              </Form.Item>
-              {!editingUser && (
-                <Form.Item
-                  name="password"
-                  label="Password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please enter the user's password",
-                    },
+                <Modal
+                  title={editingUser ? "Edit User" : "Add User"}
+                  visible={isModalVisible}
+                  onCancel={handleCancel}
+                  footer={[
+                    <Button key="cancel" onClick={handleCancel}>
+                      Cancel
+                    </Button>,
+                    <Button key="save" type="primary" onClick={handleSave}>
+                      Save
+                    </Button>,
                   ]}
                 >
-                  <Input.Password
-                    onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Enter Password"
-                  />
-                </Form.Item>
-              )}
-              <Form.Item
-                name="role"
-                label="Role"
-                rules={[{ required: true, message: "Please select a role" }]}
-              >
-                <Select
-                  onChange={(value) => setRole(value)}
-                  placeholder="Select a Role"
-                >
-                  <Select.Option value="admin">Admin</Select.Option>
-                  <Select.Option value="user">User</Select.Option>
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name="image"
-                label="User Image"
-                rules={[
-                  {
-                    required: !editingUser,
-                    message: "Please upload an image!",
-                  },
-                ]}
-              >
-                <input
-                  id="chooseAvatar"
-                  name="chooseAvatar"
-                  type="file"
-                  accept="image/*"
-                  required={!editingUser}
-                  onChange={imageHandler}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
-                />
-                {avatar && (
-                  <img
-                    src={avatar}
-                    alt="Profile Image"
-                    style={{
-                      marginTop: "10px",
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  />
-                )}
-              </Form.Item>
-            </Form>
-          </Modal>
-        </div>
-      </div>
+                  <Form form={form} layout="vertical">
+                    <Form.Item
+                      name="name"
+                      label="Name"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter the user name",
+                        },
+                      ]}
+                    >
+                      <Input
+                        onChange={(e) => setName(e.target.value)}
+                        placeholder="Enter Name"
+                      />
+                    </Form.Item>
+                    <Form.Item
+                      name="email"
+                      label="Email"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter the user's email",
+                        },
+                      ]}
+                    >
+                      <Input
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter Email"
+                      />
+                    </Form.Item>
+                    {!editingUser && (
+                      <Form.Item
+                        name="password"
+                        label="Password"
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter the user's password",
+                          },
+                        ]}
+                      >
+                        <Input.Password
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter Password"
+                        />
+                      </Form.Item>
+                    )}
+                    <Form.Item
+                      name="role"
+                      label="Role"
+                      rules={[
+                        { required: true, message: "Please select a role" },
+                      ]}
+                    >
+                      <Select
+                        onChange={(value) => setRole(value)}
+                        placeholder="Select a Role"
+                      >
+                        <Select.Option value="admin">Admin</Select.Option>
+                        <Select.Option value="user">User</Select.Option>
+                      </Select>
+                    </Form.Item>
+                    <Form.Item
+                      name="image"
+                      label="User Image"
+                      rules={[
+                        {
+                          required: !editingUser,
+                          message: "Please upload an image!",
+                        },
+                      ]}
+                    >
+                      <input
+                        id="chooseAvatar"
+                        name="chooseAvatar"
+                        type="file"
+                        accept="image/*"
+                        required={!editingUser}
+                        onChange={imageHandler}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
+                      />
+                      {avatar && (
+                        <img
+                          src={avatar}
+                          alt="Profile Image"
+                          style={{
+                            marginTop: "10px",
+                            width: "100px",
+                            height: "100px",
+                          }}
+                        />
+                      )}
+                    </Form.Item>
+                  </Form>
+                </Modal>
+              </div>
+            </div>
+          </>
+        )}
+      </Fragment>
     </Layout>
   );
 };

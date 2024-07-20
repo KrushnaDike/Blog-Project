@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import { Table, Button, Modal, Form, Input, Select, Image } from "antd";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,6 +10,7 @@ import {
   getAllPosts,
   updatePost,
 } from "../../../redux/actions/posts";
+import Loader from "../../Layout/Loader/Loader";
 
 const { Option } = Select;
 
@@ -179,151 +180,169 @@ const Posts = () => {
 
   return (
     <Layout>
-      <div className="flex-1 p-5 bg-white">
-        <div>
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              marginBottom: "1rem",
-            }}
-          >
-            <h2 className="font-bold">ALL POSTS</h2>
-            <Button type="primary" onClick={handleAddPost}>
-              + Add Post
-            </Button>
-          </div>
-          <Table
-            dataSource={posts}
-            columns={columns}
-            pagination={{ pageSize: 10 }}
-            rowKey="_id"
-            defaultSortOrder="ascend"
-          />
-
-          {/* Modal for adding/editing post */}
-          <Modal
-            title={editingPost ? "Edit Post" : "Add Post"}
-            visible={isModalVisible}
-            onCancel={handleCancel}
-            footer={[
-              <Button key="cancel" onClick={handleCancel}>
-                Cancel
-              </Button>,
-              <Button key="save" type="primary" onClick={handleSave}>
-                Save
-              </Button>,
-            ]}
-          >
-            <Form form={form} layout="vertical">
-              <Form.Item
-                name="thumbnailImage"
-                label="Post Image"
-                rules={[{ required: true, message: "Please upload an image!" }]}
-              >
-                <input
-                  id="chooseAvatar"
-                  name="chooseAvatar"
-                  type="file"
-                  accept="image/*"
-                  required={!editingPost}
-                  onChange={imageHandler}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
-                />
-                {avatar && (
-                  <img
-                    src={avatar}
-                    alt="Post Image"
-                    style={{
-                      marginTop: "10px",
-                      width: "100px",
-                      height: "100px",
-                    }}
-                  />
-                )}
-              </Form.Item>
-
-              <Form.Item
-                name="title"
-                label="Title"
-                rules={[{ required: true, message: "Please enter the title!" }]}
-              >
-                <Input
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Enter Title"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="category"
-                label="Category"
-                rules={[
-                  { required: true, message: "Please select a category!" },
-                ]}
-              >
-                <Select
-                  placeholder="Select a Category"
-                  onChange={(value) => setCategory(value)}
+      <Fragment>
+        {loading ? (
+          <Loader />
+        ) : (
+          <>
+            <div className="flex-1 p-5 bg-white">
+              <div>
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    marginBottom: "1rem",
+                  }}
                 >
-                  <Option value="food">Food</Option>
-                  <Option value="travel">Travel</Option>
-                  <Option value="familyFun">Family & Fun</Option>
-                  <Option value="recipe">Recipe</Option>
-                  <Option value="events">Events</Option>
-                  <Option value="foundation">Foundation</Option>
-                  {/* Add more options as needed */}
-                </Select>
-              </Form.Item>
-
-              <Form.Item
-                name="author"
-                label="Author"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter the author name!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Enter Author Name"
-                  onChange={(e) => setAuthor(e.target.value)}
+                  <h2 className="font-bold">ALL POSTS</h2>
+                  <Button type="primary" onClick={handleAddPost}>
+                    + Add Post
+                  </Button>
+                </div>
+                <Table
+                  dataSource={posts}
+                  columns={columns}
+                  pagination={{ pageSize: 10 }}
+                  rowKey="_id"
+                  defaultSortOrder="ascend"
                 />
-              </Form.Item>
 
-              <Form.Item
-                name="content"
-                label="Content"
-                rules={[
-                  { required: true, message: "Please enter the content!" },
-                ]}
-              >
-                <Input.TextArea
-                  rows={6}
-                  placeholder="Enter Content"
-                  onChange={(e) => setContent(e.target.value)}
-                />
-              </Form.Item>
+                {/* Modal for adding/editing post */}
+                <Modal
+                  title={editingPost ? "Edit Post" : "Add Post"}
+                  visible={isModalVisible}
+                  onCancel={handleCancel}
+                  footer={[
+                    <Button key="cancel" onClick={handleCancel}>
+                      Cancel
+                    </Button>,
+                    <Button key="save" type="primary" onClick={handleSave}>
+                      Save
+                    </Button>,
+                  ]}
+                >
+                  <Form form={form} layout="vertical">
+                    <Form.Item
+                      name="thumbnailImage"
+                      label="Post Image"
+                      rules={[
+                        { required: true, message: "Please upload an image!" },
+                      ]}
+                    >
+                      <input
+                        id="chooseAvatar"
+                        name="chooseAvatar"
+                        type="file"
+                        accept="image/*"
+                        required={!editingPost}
+                        onChange={imageHandler}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
+                      />
+                      {avatar && (
+                        <img
+                          src={avatar}
+                          alt="Post Image"
+                          style={{
+                            marginTop: "10px",
+                            width: "100px",
+                            height: "100px",
+                          }}
+                        />
+                      )}
+                    </Form.Item>
 
-              <Form.Item name="metaKeywords" label="Meta Keywords">
-                <Input
-                  placeholder="Enter Meta Keywords"
-                  onChange={(e) => setMetaKeywords(e.target.value)}
-                />
-              </Form.Item>
+                    <Form.Item
+                      name="title"
+                      label="Title"
+                      rules={[
+                        { required: true, message: "Please enter the title!" },
+                      ]}
+                    >
+                      <Input
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter Title"
+                      />
+                    </Form.Item>
 
-              <Form.Item name="metaDescription" label="Meta Description">
-                <Input.TextArea
-                  rows={4}
-                  placeholder="Enter Meta Description"
-                  onChange={(e) => setMetaDescription(e.target.value)}
-                />
-              </Form.Item>
-            </Form>
-          </Modal>
-        </div>
-      </div>
+                    <Form.Item
+                      name="category"
+                      label="Category"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select a category!",
+                        },
+                      ]}
+                    >
+                      <Select
+                        placeholder="Select a Category"
+                        onChange={(value) => setCategory(value)}
+                      >
+                        <Option value="food">Food</Option>
+                        <Option value="travel">Travel</Option>
+                        <Option value="familyFun">Family & Fun</Option>
+                        <Option value="recipe">Recipe</Option>
+                        <Option value="events">Events</Option>
+                        <Option value="foundation">Foundation</Option>
+                        {/* Add more options as needed */}
+                      </Select>
+                    </Form.Item>
+
+                    <Form.Item
+                      name="author"
+                      label="Author"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter the author name!",
+                        },
+                      ]}
+                    >
+                      <Input
+                        placeholder="Enter Author Name"
+                        onChange={(e) => setAuthor(e.target.value)}
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="content"
+                      label="Content"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter the content!",
+                        },
+                      ]}
+                    >
+                      <Input.TextArea
+                        rows={6}
+                        placeholder="Enter Content"
+                        onChange={(e) => setContent(e.target.value)}
+                      />
+                    </Form.Item>
+
+                    <Form.Item name="metaKeywords" label="Meta Keywords">
+                      <Input
+                        placeholder="Enter Meta Keywords"
+                        onChange={(e) => setMetaKeywords(e.target.value)}
+                      />
+                    </Form.Item>
+
+                    <Form.Item name="metaDescription" label="Meta Description">
+                      <Input.TextArea
+                        rows={4}
+                        placeholder="Enter Meta Description"
+                        onChange={(e) => setMetaDescription(e.target.value)}
+                      />
+                    </Form.Item>
+                  </Form>
+                </Modal>
+              </div>
+            </div>
+          </>
+        )}
+      </Fragment>
     </Layout>
   );
 };

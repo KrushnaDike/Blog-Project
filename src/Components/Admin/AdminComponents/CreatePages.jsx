@@ -20,6 +20,7 @@ import {
 } from "../../../redux/actions/pages";
 import { clearError, clearMessage } from "../../../redux/reducers/pagesReducer";
 import { toast } from "react-toastify";
+import Loader from "../../Layout/Loader/Loader";
 
 const { Option } = Select;
 
@@ -141,113 +142,125 @@ const CreatePages = () => {
 
   return (
     <Layout>
-      <div className="flex-1 p-5 bg-white">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "1rem",
-          }}
-        >
-          <h2 className="font-bold">ALL PAGES</h2>
-          <Button type="primary" onClick={handleAddPage}>
-            + Add Page
-          </Button>
-        </div>
-        <Table
-          dataSource={pages}
-          columns={columns}
-          pagination={{ pageSize: 10 }}
-          rowKey="_id"
-        />
-
-        <Modal
-          title={editingPage ? "Edit Page" : "Add Page"}
-          visible={isModalVisible}
-          onCancel={handleCancel}
-          footer={[
-            <Button key="cancel" onClick={handleCancel}>
-              Cancel
-            </Button>,
-            <Button key="save" type="primary" onClick={handleSave}>
-              Save
-            </Button>,
-          ]}
-        >
-          <Form form={form} layout="vertical">
-            <Form.Item
-              name="title"
-              label="Title"
-              rules={[{ required: true, message: "Please enter the title!" }]}
+      {loading ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="flex-1 p-5 bg-white">
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                marginBottom: "1rem",
+              }}
             >
-              <Input
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="Enter Title"
-                value={title}
-              />
-            </Form.Item>
+              <h2 className="font-bold">ALL PAGES</h2>
+              <Button type="primary" onClick={handleAddPage}>
+                + Add Page
+              </Button>
+            </div>
+            <Table
+              dataSource={pages}
+              columns={columns}
+              pagination={{ pageSize: 10 }}
+              rowKey="_id"
+            />
 
-            <Form.Item
-              name="content"
-              label="Content"
-              rules={[{ required: true, message: "Please enter the content!" }]}
+            <Modal
+              title={editingPage ? "Edit Page" : "Add Page"}
+              visible={isModalVisible}
+              onCancel={handleCancel}
+              footer={[
+                <Button key="cancel" onClick={handleCancel}>
+                  Cancel
+                </Button>,
+                <Button key="save" type="primary" onClick={handleSave}>
+                  Save
+                </Button>,
+              ]}
             >
-              <Input.TextArea
-                rows={6}
-                placeholder="Enter Content"
-                onChange={(e) => setContent(e.target.value)}
-                value={content}
-              />
-            </Form.Item>
+              <Form form={form} layout="vertical">
+                <Form.Item
+                  name="title"
+                  label="Title"
+                  rules={[
+                    { required: true, message: "Please enter the title!" },
+                  ]}
+                >
+                  <Input
+                    onChange={(e) => setTitle(e.target.value)}
+                    placeholder="Enter Title"
+                    value={title}
+                  />
+                </Form.Item>
 
-            <Form.Item name="metaKeywords" label="Meta Keywords">
-              <Input
-                placeholder="Enter Meta Keywords"
-                onChange={(e) => setMetaKeywords(e.target.value)}
-                value={metaKeywords}
-              />
-            </Form.Item>
+                <Form.Item
+                  name="content"
+                  label="Content"
+                  rules={[
+                    { required: true, message: "Please enter the content!" },
+                  ]}
+                >
+                  <Input.TextArea
+                    rows={6}
+                    placeholder="Enter Content"
+                    onChange={(e) => setContent(e.target.value)}
+                    value={content}
+                  />
+                </Form.Item>
 
-            <Form.Item name="metaDescription" label="Meta Description">
-              <Input.TextArea
-                rows={4}
-                placeholder="Enter Meta Description"
-                onChange={(e) => setMetaDescription(e.target.value)}
-                value={metaDescription}
-              />
-            </Form.Item>
+                <Form.Item name="metaKeywords" label="Meta Keywords">
+                  <Input
+                    placeholder="Enter Meta Keywords"
+                    onChange={(e) => setMetaKeywords(e.target.value)}
+                    value={metaKeywords}
+                  />
+                </Form.Item>
 
-            <Form.Item
-              name="status"
-              label="Status"
-              rules={[{ required: true, message: "Please select the status!" }]}
-            >
-              <Select
-                placeholder="Select Status"
-                onChange={(value) => setStatus(value)}
-                value={status}
-              >
-                <Option value="Active">Active</Option>
-                <Option value="Inactive">Inactive</Option>
-              </Select>
-            </Form.Item>
+                <Form.Item name="metaDescription" label="Meta Description">
+                  <Input.TextArea
+                    rows={4}
+                    placeholder="Enter Meta Description"
+                    onChange={(e) => setMetaDescription(e.target.value)}
+                    value={metaDescription}
+                  />
+                </Form.Item>
 
-            <Form.Item
-              name="cloneForOtherLanguage"
-              valuePropName="checked"
-              label="Clone for Other Language"
-            >
-              <Checkbox
-                onChange={(e) => setCloneForOtherLanguage(e.target.checked)}
-                checked={cloneForOtherLanguage}
-              >
-                Clone for عربي or other language
-              </Checkbox>
-            </Form.Item>
-          </Form>
-        </Modal>
-      </div>
+                <Form.Item
+                  name="status"
+                  label="Status"
+                  rules={[
+                    { required: true, message: "Please select the status!" },
+                  ]}
+                >
+                  <Select
+                    placeholder="Select Status"
+                    onChange={(value) => setStatus(value)}
+                    value={status}
+                  >
+                    <Option value="Active">Active</Option>
+                    <Option value="Inactive">Inactive</Option>
+                  </Select>
+                </Form.Item>
+
+                <Form.Item
+                  name="cloneForOtherLanguage"
+                  valuePropName="checked"
+                  label="Clone for Other Language"
+                >
+                  <Checkbox
+                    onChange={(e) => setCloneForOtherLanguage(e.target.checked)}
+                    checked={cloneForOtherLanguage}
+                  >
+                    Clone for عربي or other language
+                  </Checkbox>
+                </Form.Item>
+              </Form>
+            </Modal>
+          </div>
+        </>
+      )}
     </Layout>
   );
 };

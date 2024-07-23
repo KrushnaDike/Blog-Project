@@ -10,6 +10,7 @@ import {
   CloseOutlined,
   UserOutlined,
   MessageOutlined,
+  PictureOutlined
 } from "@ant-design/icons";
 import { Layout, Menu, Button } from "antd";
 import Blogger from "../../../assets/Blogger.png";
@@ -32,6 +33,12 @@ const Sidebar = () => {
       icon: <DashboardOutlined />,
       label: "Dashboard",
       to: "/admin",
+    },
+    {
+      key: "/admin/slider",
+      icon: <PictureOutlined />,
+      label: "Slider Images",
+      to: "/admin/slider",
     },
     {
       key: "post-management",
@@ -99,12 +106,6 @@ const Sidebar = () => {
           icon: <FileTextOutlined />,
           label: "Quick Links",
           to: "/admin/footer/quicklinks",
-        },
-        {
-          key: "/admin/footer/slider",
-          icon: <FileTextOutlined />,
-          label: "Slider Images",
-          to: "/admin/footer/slider",
         },
       ],
     },

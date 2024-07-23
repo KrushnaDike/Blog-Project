@@ -14,7 +14,7 @@ function Trending() {
   );
   const dispatch = useDispatch();
 
-  console.log(youtubeShorts);
+  // console.log(youtubeShorts);
 
   useEffect(() => {
     if (error) {

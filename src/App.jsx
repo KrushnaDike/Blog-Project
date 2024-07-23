@@ -59,6 +59,7 @@ import AdminAds from "./Components/Admin/AdminComponents/AdminAds";
 import AdminYoutubeShorts from "./Components/Admin/AdminComponents/AdminYoutubeShorts.jsx";
 import Loader from "./Components/Layout/Loader/Loader.jsx";
 import UserMessages from "./Components/Admin/AdminComponents/UserMessages.jsx";
+import Navbar from "./Pages/Navbar.jsx";
 
 function App() {
   const { isAuthenticated, user, error, message, loading } = useSelector(
@@ -127,7 +128,7 @@ function App() {
               />
               <Route path="/admin/footer/quicklinks" element={<QuickLinks />} />
               <Route path="/admin/footer/logo-text" element={<LogoText />} />
-              <Route path="/admin/footer/slider" element={<Slider />} />
+              <Route path="/admin/slider" element={<Slider />} />
               <Route
                 path="/admin/user-management"
                 element={<UserManagement />}

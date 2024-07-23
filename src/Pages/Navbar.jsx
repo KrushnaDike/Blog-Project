@@ -11,8 +11,11 @@ import { getAllPages } from "../redux/actions/pages";
 import { toast } from "react-toastify";
 import Loader from "../Components/Layout/Loader/Loader";
 import Contact from "../Components/Contact/Contact";
+import { logout } from "../redux/actions/user";
 
 const Navbar = () => {
+  const { isAuthenticated } = useSelector((state) => state.user);
+
   const [isOpen, setIsOpen] = useState(false);
   const [active, setActive] = useState("All");
   const [showContact, setShowContact] = useState(false);
@@ -50,6 +53,11 @@ const Navbar = () => {
 
   const formatTitleForUrl = (title) => {
     return title.replace(/ & /g, "").replace(/ /g, "").toLowerCase();
+  };
+
+  const logoutHandler = () => {
+    dispatch(logout());
+    navigate("/");
   };
 
   if (!pages || loading) {
@@ -103,10 +111,20 @@ const Navbar = () => {
             <div className="hidden md:flex items-center space-x-4">
               <button
                 onClick={() => setShowContact(true)}
-                className="text-white hover:text-black px-4 py-2 bg-green-900 rounded"
+                className="text-white hover:bg-green-800 px-4 py-2 bg-green-900 rounded"
               >
                 Contact Us
               </button>
+              {isAuthenticated ? (
+                <button
+                  onClick={logoutHandler}
+                  className="text-white hover:bg-red-500 px-4 py-2 bg-red-400 rounded"
+                >
+                  Logout
+                </button>
+              ) : (
+                <></>
+              )}
             </div>
 
             <button

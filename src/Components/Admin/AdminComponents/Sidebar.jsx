@@ -62,6 +62,12 @@ const Sidebar = () => {
           label: "Ad's",
           to: "/admin/post-management/ads",
         },
+        {
+          key: "/admin/post-management/shorts",
+          icon: <FileTextOutlined />,
+          label: "Youtube Shorts",
+          to: "/admin/post-management/shorts",
+        },
       ],
     },
     {

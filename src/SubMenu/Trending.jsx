@@ -1,50 +1,46 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import YouTubeShort from "../Components/YouTubeShort";
+import { useDispatch, useSelector } from "react-redux";
+import { clearError, clearMessage } from "../redux/reducers/shortsReducer";
+import { getAllYoutubeShorts } from "../redux/actions/shorts";
+import Loader from "../Components/Layout/Loader/Loader";
 
 function Trending() {
   const [currentPage, setCurrentPage] = useState(1);
-  const cardsPerPage = 6; // Number of cards per page
+  const cardsPerPage = 6;
 
-  const cardsData = [
-    {
-      description: "Short 1 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    {
-      description: "Short 2 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    {
-      description: "Short 2 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    {
-      description: "Short 2 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    {
-      description: "Short 2 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    {
-      description: "Short 2 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    {
-      description: "Short 2 Description",
-      videoUrl: "https://www.youtube.com/embed/7A2CSuNJSrA",
-    },
-    // Add more YouTube Shorts
-  ];
+  const { youtubeShorts, loading, error, message } = useSelector(
+    (state) => state.shorts
+  );
+  const dispatch = useDispatch();
+
+  console.log(youtubeShorts);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
+
+    dispatch(getAllYoutubeShorts());
+  }, [dispatch, error, message]);
+
+  if (!youtubeShorts || loading) {
+    return <Loader />;
+  }
 
   const indexOfLastCard = currentPage * cardsPerPage;
   const indexOfFirstCard = indexOfLastCard - cardsPerPage;
-  const currentCards = cardsData.slice(indexOfFirstCard, indexOfLastCard);
+  const currentCards = youtubeShorts.slice(indexOfFirstCard, indexOfLastCard);
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const pageNumbers = [];
-  for (let i = 1; i <= Math.ceil(cardsData.length / cardsPerPage); i++) {
+  for (let i = 1; i <= Math.ceil(youtubeShorts.length / cardsPerPage); i++) {
     pageNumbers.push(i);
   }
 

@@ -10,7 +10,7 @@ import Domestic from "../Pages/Domestic";
 
 function Travel() {
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <Navbar />
       <div className="hero min-h mt-2 bg-cover bg-center">
         <img

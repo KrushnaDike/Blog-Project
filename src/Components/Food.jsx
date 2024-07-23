@@ -8,7 +8,7 @@ import Footer from "../Pages/Footer";
 import Domestic from "../Pages/Domestic";
 function Food() {
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <Navbar />
       <div className="hero min-h mt-2 bg-cover bg-center mb-2">
         <img

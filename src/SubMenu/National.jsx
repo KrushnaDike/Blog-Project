@@ -10,7 +10,7 @@ function National() {
   return (
     <>
       <div className="text-2xl font-bold mx-5 mb-2">National</div>
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="container grid gap-4 md:grid-cols-2">
         <div className="flex flex-row space-y-4">
           <div className="relative overflow-hidden rounded-xl shadow-md">
             <img

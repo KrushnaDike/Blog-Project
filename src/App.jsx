@@ -56,8 +56,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { getAllSliderImages } from "./redux/actions/slider";
 import Popups from "./Components/Admin/AdminComponents/Popups";
 import AdminAds from "./Components/Admin/AdminComponents/AdminAds";
+import AdminYoutubeShorts from "./Components/Admin/AdminComponents/AdminYoutubeShorts.jsx";
 import Loader from "./Components/Layout/Loader/Loader.jsx";
-import Navbar from "./Pages/Navbar.jsx";
 import UserMessages from "./Components/Admin/AdminComponents/UserMessages.jsx";
 
 function App() {
@@ -117,6 +117,10 @@ function App() {
               <Route path="/admin/post-management/posts" element={<Posts />} />
               <Route path="/admin/post-management/popup" element={<Popups />} />
               <Route path="/admin/post-management/ads" element={<AdminAds />} />
+              <Route
+                path="/admin/post-management/shorts"
+                element={<AdminYoutubeShorts />}
+              />
               <Route
                 path="/admin/custompages/createpage"
                 element={<CreatePages />}
@@ -185,7 +189,7 @@ function App() {
               <Route path="/recipedatacook" element={<RecipeDataCook />} />
               <Route path="/foundation" element={<Foundation />} />
 
-              <Route path="/:title" element={<DynamicPage />} />
+              {/* <Route path="/:title" element={<DynamicPage />} /> */}
 
               <Route path="*" element={<PageNotFound />} />
             </>
@@ -253,7 +257,7 @@ function App() {
               <Route path="/foundation" element={<Foundation />} />
 
               {/* Dynamic Route */}
-              <Route path="/:title" element={<DynamicPage />} />
+              {/* <Route path="/:title" element={<DynamicPage />} /> */}
 
               <Route path="*" element={<PageNotFound />} />
             </>

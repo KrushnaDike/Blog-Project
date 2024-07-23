@@ -9,7 +9,7 @@ function FamilyFun() {
   return (
     
     <> 
-    <div className='container mx-auto'>
+    <div className='mx-auto'>
     <Navbar/>
     <Domestic />
     <Challenge/>

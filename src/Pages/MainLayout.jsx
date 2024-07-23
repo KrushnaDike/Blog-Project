@@ -16,7 +16,7 @@ import RecipeDataCook from "../Components/RecipeDataCook";
 import Domestic from "./Domestic";
 function MainLayout({ sliders }) {
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <Navbar />
       <HeroPage />
       <Domestic />

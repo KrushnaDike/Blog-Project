@@ -57,7 +57,7 @@ export default Domestic;
 
 const Post = ({ item }) => {
   return (
-    <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
+    <div className="container flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
       <div className="relative overflow-hidden rounded-xl shadow-md flex-shrink-0 w-full md:w-1/2 h-60">
         <img
           src={item.thumbnailImage.url}

@@ -7,7 +7,7 @@ import Domestic from "../Pages/Domestic";
 function Recipe() {
   return (
     <>
-      <div className="container mx-auto">
+      <div className="mx-auto">
         <Navbar />
         <Domestic />
         <Veg />

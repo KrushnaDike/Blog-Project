@@ -10,8 +10,13 @@ import pagesReducer from "./reducers/pagesReducer";
 import popupReducer from "./reducers/popupReducer";
 import adReducer from "./reducers/adReducer";
 import otherReducer from "./reducers/otherReducer";
+import shortsReducer from "./reducers/shortsReducer";
 
+// PRODUCTION
 export const server = "https://blog-server-sp45.onrender.com/api/v1";
+
+// DEVELOPMENT
+// export const server = "http://localhost:2000/api/v1";
 
 const store = configureStore({
   reducer: {
@@ -24,6 +29,7 @@ const store = configureStore({
     popups: popupReducer,
     ads: adReducer,
     other: otherReducer,
+    shorts: shortsReducer,
   },
 });
 

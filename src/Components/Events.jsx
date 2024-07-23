@@ -6,7 +6,7 @@ import Footer from "../Pages/Footer";
 import Domestic from "../Pages/Domestic";
 function Events() {
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <Navbar />
       <Domestic />
       <Awards />

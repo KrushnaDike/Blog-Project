@@ -8,7 +8,7 @@ import food from '../assets/food.png';
 function LunchwithStar() {
   return (
     <>
-      <div className="grid gap-4 md:grid-cols-2 mb-4 mt-10">
+      <div className="container grid gap-4 md:grid-cols-2 mb-4 mt-10">
         <div className="flex flex-row space-y-4">
           <div className="relative overflow-hidden rounded-xl shadow-md">
             <img

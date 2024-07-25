@@ -1,89 +1,116 @@
-// LogoText.jsx
-
-import React, { useState } from "react";
-import { Form, Input, Upload, Button, message } from "antd";
-import { UploadOutlined } from "@ant-design/icons";
+import React, { useState, useEffect } from "react";
+import { Form, Button, message } from "antd";
+import { SaveOutlined, EditOutlined } from "@ant-design/icons";
 import Layout from "./Layout";
+import { useDispatch, useSelector } from "react-redux";
+import { clearError, clearMessage } from "../../../redux/reducers/otherReducer";
+import { toast } from "react-toastify";
+import { createLogo, getLogo, updateLogo } from "../../../redux/actions/other";
+import Loader from "../../Layout/Loader/Loader";
 
 const LogoText = () => {
+  const [image, setImage] = useState(null);
+  const [avatar, setAvatar] = useState("");
+  const [isNew, setIsNew] = useState(true);
+
   const [form] = Form.useForm();
-  const [logoFileList, setLogoFileList] = useState([]);
 
-  const handleLogoChange = ({ fileList }) => {
-    setLogoFileList(fileList);
-  };
+  const { logo, loading, error, message } = useSelector((state) => state.other);
+  const dispatch = useDispatch();
 
-  const onFinish = (values) => {
-    console.log("Received values:", values);
-    // Implement your logic to save/update data (e.g., API call)
+  useEffect(() => {
+    dispatch(getLogo());
 
-    // Reset form fields and file list
-    form.resetFields();
-    setLogoFileList([]);
-    message.success("Footer information saved successfully!");
-  };
-
-  const beforeUpload = (file) => {
-    const isImage = file.type.startsWith("image/");
-    if (!isImage) {
-      message.error("Only JPG, PNG, JPEG, or SVG images are allowed!");
+    if (logo && logo.logoImage) {
+      const existingImage = logo.logoImage.url;
+      if (existingImage) {
+        setAvatar(existingImage);
+        setIsNew(false);
+      }
     }
-    return isImage;
+  }, [dispatch, logo]);
+
+  useEffect(() => {
+    if (error) {
+      toast.error(error);
+      dispatch(clearError());
+    }
+    if (message) {
+      toast.info(message);
+      dispatch(clearMessage());
+    }
+  }, [dispatch, error, message]);
+
+  const imageHandler = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+
+    reader.readAsDataURL(file);
+
+    reader.onloadend = () => {
+      setAvatar(reader.result);
+      setImage(file);
+    };
+  };
+
+  const handleSaveOrUpdate = async () => {
+    if (image) {
+      const formData = new FormData();
+      formData.append("file", image);
+
+      try {
+        if (isNew) {
+          // Add new logo image
+          dispatch(createLogo(formData));
+        } else {
+          // Update existing logo image
+          dispatch(updateLogo(formData));
+        }
+      } catch (error) {
+        message.error("Failed to save or update image.");
+      }
+    }
   };
 
   return (
     <Layout>
-      <Form
-        form={form}
-        layout="vertical"
-        onFinish={onFinish}
-        initialValues={{
-          footerLogo: null, // Initial value for logo, if any
-          aboutCompany: "", // Initial value for about company
-          copyrightText: "© 2021 Olima all rights reserved.", // Initial value for copyright text
-        }}
-      >
-        <Form.Item
-          name="footerLogo"
-          label="Footer Logo"
-          valuePropName="fileList"
-          getValueFromEvent={handleLogoChange}
-          rules={[{ required: true, message: "Please upload a footer logo!" }]}
-        >
-          <Upload
-            beforeUpload={beforeUpload}
-            maxCount={1}
-            fileList={logoFileList}
-            listType="picture"
+      <div className="p-5 bg-white shadow rounded">
+        <Form form={form} layout="vertical">
+          <Form.Item
+            name="thumbnailImage"
+            label="Upload Image"
+            rules={[{ required: true, message: "Please upload an image!" }]}
           >
-            <Button icon={<UploadOutlined />}>Upload Logo</Button>
-          </Upload>
-        </Form.Item>
-
-        <Form.Item
-          name="aboutCompany"
-          label="About Company"
-          rules={[
-            { required: true, message: "Please enter about company text!" },
-          ]}
-        >
-          <Input.TextArea rows={4} placeholder="Enter About Company text" />
-        </Form.Item>
-
-        <Form.Item
-          name="copyrightText"
-          label="Copyright Text"
-          rules={[{ required: true, message: "Please enter copyright text!" }]}
-        >
-          <Input placeholder="Enter Copyright Text" />
-        </Form.Item>
-
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Save
-          </Button>
-        </Form.Item>
-      </Form>
+            <input
+              id="chooseAvatar"
+              name="chooseAvatar"
+              type="file"
+              accept="image/*"
+              onChange={imageHandler}
+              className="mt-1 block w-50 px-3 py-2 border cursor-pointer border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500"
+            />
+            {avatar && (
+              <div className="mt-4">
+                <img
+                  src={avatar}
+                  alt="Preview"
+                  className="w-32 h-32 object-cover rounded-md border border-gray-200"
+                />
+              </div>
+            )}
+          </Form.Item>
+          <Form.Item>
+            <Button
+              type="primary"
+              icon={isNew ? <SaveOutlined /> : <EditOutlined />}
+              onClick={handleSaveOrUpdate}
+              className="mt-4"
+            >
+              {isNew ? "Save" : "Update"}
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </Layout>
   );
 };

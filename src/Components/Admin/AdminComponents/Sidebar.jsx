@@ -14,7 +14,7 @@ import {
 } from "@ant-design/icons";
 import { Layout, Menu, Button } from "antd";
 import Blogger from "../../../assets/Blogger.png";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../../redux/actions/user";
 
 const { Sider } = Layout;
@@ -22,28 +22,32 @@ const { Sider } = Layout;
 const Sidebar = () => {
   const [collapsed, setCollapsed] = useState(false);
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.user);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
 
-  const menuItems = [
+  const allMenuItems = [
     {
       key: "/admin",
       icon: <DashboardOutlined />,
       label: "Dashboard",
       to: "/admin",
+      permission: "dashboard",
     },
     {
       key: "/admin/slider",
       icon: <PictureOutlined />,
       label: "Slider Images",
       to: "/admin/slider",
+      permission: "Slider",
     },
     {
       key: "post-management",
       icon: <ProjectOutlined />,
       label: "Post Management",
+      permission: "PostManagement",
       children: [
         {
           key: "/admin/post-management/categories",
@@ -81,6 +85,7 @@ const Sidebar = () => {
       key: "custom-pages",
       icon: <FileTextOutlined />,
       label: "Custom Pages",
+      permission: "CustomPages",
       children: [
         {
           key: "/admin/custompages/createpage",
@@ -94,6 +99,7 @@ const Sidebar = () => {
       key: "footer",
       icon: <GlobalOutlined />,
       label: "Footer",
+      permission: "Footer",
       children: [
         {
           key: "/admin/footer/logo-text",
@@ -114,12 +120,14 @@ const Sidebar = () => {
       icon: <UserOutlined />,
       label: "User Management",
       to: "/admin/user-management",
+      permission: "UserManagement",
     },
     {
       key: "/admin/user-messages",
       icon: <MessageOutlined />,
       label: "User Messages",
       to: "/admin/user-messages",
+      permission: "UserMessages",
     },
   ];
 
@@ -128,6 +136,16 @@ const Sidebar = () => {
     dispatch(logout());
     navigate("/");
   };
+
+  // Filter menu items based on user permissions
+  const filterMenuItems = (items, permissions) =>
+    items.filter(item => item.permission ? permissions.includes(item.permission) : true)
+      .map(item => ({
+        ...item,
+        children: item.children ? filterMenuItems(item.children, permissions) : undefined,
+      }));
+
+  const menuItems = user ? filterMenuItems(allMenuItems, user.permissions) : allMenuItems;
 
   return (
     <Sider trigger={null} collapsible collapsed={collapsed}>

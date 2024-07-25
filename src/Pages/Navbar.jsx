@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import Loader from "../Components/Layout/Loader/Loader";
 import Contact from "../Components/Contact/Contact";
 import { logout } from "../redux/actions/user";
+import { getLogo } from "../redux/actions/other";
 
 const Navbar = () => {
   const { isAuthenticated } = useSelector((state) => state.user);
@@ -37,6 +38,7 @@ const Navbar = () => {
   const { pages, loading, error, message } = useSelector(
     (state) => state.pages
   );
+  const { logo } = useSelector((state) => state.other);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -48,6 +50,7 @@ const Navbar = () => {
       toast.info(message);
       dispatch(clearMessage());
     }
+    dispatch(getLogo());
     dispatch(getAllPages());
   }, [dispatch, error, message]);
 
@@ -71,7 +74,15 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <Link to="/" className="flex items-center">
-              <img src={mainlogo} alt="Logo" className="h-10 w-auto" />
+              {logo ? (
+                <img
+                  src={logo.logoImage.url}
+                  alt="Logo"
+                  className="h-12 w-auto"
+                />
+              ) : (
+                <img src={mainlogo} alt="Logo" className="h-10 w-auto" />
+              )}
             </Link>
           </div>
 

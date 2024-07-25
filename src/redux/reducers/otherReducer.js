@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   loading: false,
+  logo: null,
   contacts: null,
   message: null,
   error: null,
@@ -19,6 +20,44 @@ const otherSlice = createSlice({
       state.contacts = action.payload;
     },
     getAllContactsFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    createLogoRequest: (state) => {
+      state.loading = true;
+    },
+    createLogoSuccess: (state, action) => {
+      state.loading = false;
+      state.logo = action.payload.newLogo;
+      state.message = action.payload.message;
+    },
+    createLogoFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    updateLogoRequest: (state) => {
+      state.loading = true;
+    },
+    updateLogoSuccess: (state, action) => {
+      state.loading = false;
+      state.logo = action.payload.logo;
+      state.message = action.payload.message;
+    },
+    updateLogoFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    getLogoRequest: (state) => {
+      state.loading = true;
+    },
+    getLogoSuccess: (state, action) => {
+      state.loading = false;
+      state.logo = action.payload;
+    },
+    getLogoFail: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
@@ -51,6 +90,15 @@ export const {
   getAllContactsRequest,
   getAllContactsSuccess,
   getAllContactsFail,
+  getLogoRequest,
+  getLogoSuccess,
+  getLogoFail,
+  createLogoSuccess,
+  createLogoFail,
+  createLogoRequest,
+  updateLogoRequest,
+  updateLogoSuccess,
+  updateLogoFail,
   clearError,
   clearMessage,
 } = otherSlice.actions;

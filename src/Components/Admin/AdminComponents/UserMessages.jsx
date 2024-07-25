@@ -26,7 +26,7 @@ const UserMessages = () => {
     dispatch(getAllContacts());
   }, [dispatch, error, message]);
 
-  console.log(contacts);
+  // console.log(contacts);
 
   const columns = [
     {

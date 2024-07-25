@@ -1,5 +1,5 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Table, Button, Modal, Form, Input, Select, Image } from "antd";
+import { Table, Button, Modal, Form, Input, Select, Checkbox } from "antd";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -8,14 +8,14 @@ import { clearError, clearMessage } from "../../../redux/reducers/adminReducer";
 import { register, updateUser } from "../../../redux/actions/user";
 import Loader from "../../Layout/Loader/Loader";
 
+const { Option } = Select;
+
 const UserManagement = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("");
   const [password, setPassword] = useState("");
-  const [avatar, setAvatar] = useState("");
-  const [image, setImage] = useState("");
-  const [currentImageBlob, setCurrentImageBlob] = useState(null);
+  const [permissions, setPermissions] = useState([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -50,22 +50,15 @@ const UserManagement = () => {
       key: "sno",
       render: (text, record, index) => index + 1,
     },
-    {
-      title: "Image",
-      dataIndex: "avatar",
-      key: "avatar",
-      render: (avatar) => (
-        <Image
-          width={50}
-          src={avatar?.url}
-          alt="Profile Image"
-          fallback="https://via.placeholder.com/50"
-        />
-      ),
-    },
     { title: "Name", dataIndex: "name", key: "name" },
     { title: "Email", dataIndex: "email", key: "email" },
     { title: "Role", dataIndex: "role", key: "role" },
+    {
+      title: "Permissions",
+      dataIndex: "permissions",
+      key: "permissions",
+      render: (permissions) => permissions.join(", "),
+    },
     {
       title: "Actions",
       key: "actions",
@@ -89,53 +82,33 @@ const UserManagement = () => {
   const handleCancel = () => {
     setIsModalVisible(false);
     form.resetFields();
-    setImage("");
-    setAvatar("");
-    setCurrentImageBlob(null);
     setEditingUser(null);
-  };
-
-  const imageHandler = (e) => {
-    const file = e.target.files[0];
-
-    const reader = new FileReader();
-
-    reader.readAsDataURL(file);
-
-    reader.onloadend = () => {
-      setAvatar(reader.result); // just for preview on screen
-      setImage(file); // database ke liye file ka blob
-    };
+    setPermissions([]);
   };
 
   const handleSave = async () => {
     try {
-      const myForm = new FormData();
-      myForm.append("name", name);
-      myForm.append("email", email);
-      myForm.append("role", role);
-      if (!editingUser) {
-        myForm.append("password", password);
-      }
+      const userData = {
+        name,
+        email,
+        role,
+        permissions,
+      };
 
-      if (image) {
-        myForm.append("file", image);
-      } else if (currentImageBlob) {
-        myForm.append("file", currentImageBlob);
+      if (!editingUser) {
+        userData.password = password;
       }
 
       if (editingUser) {
-        dispatch(updateUser(myForm, editingUser._id));
+        dispatch(updateUser(userData, editingUser._id));
       } else {
-        dispatch(register(myForm));
+        dispatch(register(userData));
       }
 
       setIsModalVisible(false);
       form.resetFields();
-      setImage("");
-      setAvatar("");
-      setCurrentImageBlob(null);
       setEditingUser(null);
+      setPermissions([]);
     } catch (error) {
       console.error("Error saving user:", error);
     }
@@ -146,22 +119,29 @@ const UserManagement = () => {
     setName(record.name);
     setEmail(record.email);
     setRole(record.role);
-    setAvatar(record.avatar.url);
-
-    // Convert the URL to a blob
-    fetch(record.avatar.url)
-      .then((response) => response.blob())
-      .then((blob) => {
-        setCurrentImageBlob(blob);
-      });
+    setPermissions(record.permissions);
 
     setIsModalVisible(true);
     form.setFieldsValue({
       name: record.name,
       email: record.email,
       role: record.role,
+      permissions: record.permissions,
     });
   };
+
+  const handleCheckboxChange = (checkedValues) => {
+    setPermissions(checkedValues);
+  };
+
+  const permissionOptions = [
+    "Slider",
+    "PostManagement",
+    "CustomPages",
+    "Footer",
+    "UserManagement",
+    "UserMessages",
+  ];
 
   return (
     <Layout>
@@ -212,6 +192,7 @@ const UserManagement = () => {
                       ]}
                     >
                       <Input
+                        value={name}
                         onChange={(e) => setName(e.target.value)}
                         placeholder="Enter Name"
                       />
@@ -227,6 +208,7 @@ const UserManagement = () => {
                       ]}
                     >
                       <Input
+                        value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="Enter Email"
                       />
@@ -243,6 +225,7 @@ const UserManagement = () => {
                         ]}
                       >
                         <Input.Password
+                          value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Enter Password"
                         />
@@ -256,43 +239,29 @@ const UserManagement = () => {
                       ]}
                     >
                       <Select
+                        value={role}
                         onChange={(value) => setRole(value)}
                         placeholder="Select a Role"
                       >
-                        <Select.Option value="admin">Admin</Select.Option>
-                        <Select.Option value="user">User</Select.Option>
+                        <Option value="admin">Admin</Option>
+                        <Option value="user">User</Option>
                       </Select>
                     </Form.Item>
                     <Form.Item
-                      name="image"
-                      label="User Image"
+                      name="permissions"
+                      label="Permissions"
                       rules={[
                         {
-                          required: !editingUser,
-                          message: "Please upload an image!",
+                          required: true,
+                          message: "Please select at least one permission",
                         },
                       ]}
                     >
-                      <input
-                        id="chooseAvatar"
-                        name="chooseAvatar"
-                        type="file"
-                        accept="image/*"
-                        required={!editingUser}
-                        onChange={imageHandler}
-                        className="mt-1 block w-full px-3 py-2 border border-gray-300 text-gray-900 rounded-md shadow-sm focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"
+                      <Checkbox.Group
+                        options={permissionOptions}
+                        value={permissions}
+                        onChange={handleCheckboxChange}
                       />
-                      {avatar && (
-                        <img
-                          src={avatar}
-                          alt="Profile Image"
-                          style={{
-                            marginTop: "10px",
-                            width: "100px",
-                            height: "100px",
-                          }}
-                        />
-                      )}
                     </Form.Item>
                   </Form>
                 </Modal>

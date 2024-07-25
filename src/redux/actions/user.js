@@ -23,7 +23,7 @@ export const register = (formdata) => async (dispatch) => {
     dispatch(signupRequest());
     const { data } = await axios.post(`${server}/user/signup`, formdata, {
       headers: {
-        "Content-type": "multipart/form-data",
+        "Content-type": "application/json",
       },
       withCredentials: true,
     });
@@ -43,7 +43,7 @@ export const updateUser = (formdata, userId) => async (dispatch) => {
       formdata,
       {
         headers: {
-          "Content-type": "multipart/form-data",
+          "Content-type": "application/json",
         },
         withCredentials: true,
       }

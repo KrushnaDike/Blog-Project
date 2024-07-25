@@ -8,21 +8,30 @@ import { UserOutlined } from "@ant-design/icons";
 function Footer() {
   const [showContact, setShowContact] = useState(false);
   const { isAuthenticated, user } = useSelector((state) => state.user);
+  const { logo } = useSelector((state) => state.other);
 
   return (
     <>
       <footer className="bg-black dark:bg-gray-900">
         <div className="mx-auto w-full max-w-screen-xl">
           <div className="grid grid-cols-2 gap-8 px-4 py-6 lg:py-8 md:grid-cols-7">
-            <div>
+            <div className="flex flex-col items-center">
               <div className="rounded-full h-14 w-14 px-2 bg-white flex justify-center items-center">
-                <img src={logo} alt="" className="text-center" />
+                {logo ? (
+                <img
+                  src={logo.logoImage.url}
+                  alt="Logo"
+                  className="text-center"
+                />
+              ) : (
+                <img src={logo} alt="Logo" className="text-center" />
+              )}
               </div>
 
               <div className="mt-4">
                 {isAuthenticated ? (
                   <>
-                    <div className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
+                    <div className="bg-green-900 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
                       <UserOutlined style={{ fontSize: "1.5rem" }} />
                       <span className="ml-2">{user.name}</span>
                     </div>
@@ -30,8 +39,8 @@ function Footer() {
                 ) : (
                   <>
                     <Link to="/login">
-                      <button className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
-                        Admin Login
+                      <button className="bg-green-900 hover:bg-green-600 text-white font-bold py-2 px-4 rounded">
+                        Login
                       </button>
                     </Link>
                   </>

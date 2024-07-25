@@ -4,9 +4,18 @@ import {
   contactFail,
   contactRequest,
   contactSuccess,
+  createLogoFail,
+  createLogoRequest,
+  createLogoSuccess,
   getAllContactsFail,
   getAllContactsRequest,
   getAllContactsSuccess,
+  getLogoFail,
+  getLogoRequest,
+  getLogoSuccess,
+  updateLogoFail,
+  updateLogoRequest,
+  updateLogoSuccess,
 } from "../reducers/otherReducer";
 
 export const contactUs = (name, email, mobile, message) => async (dispatch) => {
@@ -45,5 +54,58 @@ export const getAllContacts = () => async (dispatch) => {
   } catch (error) {
     console.log("🚀 ~ getAllPopups ~ error:", error);
     dispatch(getAllContactsFail(error.response.data.message));
+  }
+};
+
+export const getLogo = () => async (dispatch) => {
+  try {
+    dispatch(getLogoRequest());
+    const { data } = await axios.get(`${server}/other/getLogo`, {
+      headers: {
+        "Content-type": "application/json",
+      },
+      withCredentials: true,
+    });
+
+    dispatch(getLogoSuccess(data.logo));
+  } catch (error) {
+    console.log("🚀 ~ getAllPopups ~ error:", error);
+    dispatch(getLogoFail(error.response.data.message));
+  }
+};
+
+export const createLogo = (formdata) => async (dispatch) => {
+  try {
+    dispatch(createLogoRequest());
+    const { data } = await axios.post(`${server}/other/createLogo`, formdata, {
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+
+    console.log(data);
+
+    dispatch(createLogoSuccess(data));
+  } catch (error) {
+    console.log("🚀 ~ login ~ error:", error);
+    dispatch(createLogoFail(error.response.data.message));
+  }
+};
+
+export const updateLogo = (formdata) => async (dispatch) => {
+  try {
+    dispatch(updateLogoRequest());
+    const { data } = await axios.put(`${server}/other/updateLogo`, formdata, {
+      headers: {
+        "Content-type": "multipart/form-data",
+      },
+      withCredentials: true,
+    });
+
+    dispatch(updateLogoSuccess(data));
+  } catch (error) {
+    console.log("🚀 ~ login ~ error:", error);
+    dispatch(updateLogoFail(error.response.data.message));
   }
 };

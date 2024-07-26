@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import facebook from "../assets/Facebook.png";
 import Instgram from "../assets/Instagram.png";
 import Twitter from "../assets/Twitter.png";
@@ -11,6 +11,14 @@ import { toast } from "react-toastify";
 import Loader from "../Components/Layout/Loader/Loader";
 
 function Domestic() {
+  const [selectedPost, setSelectedPost] = useState(null);
+  const navigate = useNavigate();
+
+  const handleShowMoreClick = (post) => {
+    setSelectedPost(post);
+    navigate("/showmore", { state: { post } });
+  };
+
   const { posts, loading, error, message } = useSelector(
     (state) => state.posts
   );
@@ -46,7 +54,11 @@ function Domestic() {
     <>
       <div className="grid gap-4 md:grid-cols-2 mb-4 mt-10">
         {posts.map((item) => (
-          <Post key={item._id} item={item} />
+          <Post
+            key={item._id}
+            item={item}
+            handleShowMoreClick={handleShowMoreClick}
+          />
         ))}
       </div>
     </>
@@ -55,7 +67,7 @@ function Domestic() {
 
 export default Domestic;
 
-const Post = ({ item }) => {
+const Post = ({ item, handleShowMoreClick }) => {
   return (
     <div className="container flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
       <div className="relative overflow-hidden rounded-xl shadow-md flex-shrink-0 w-full md:w-1/2 h-60">
@@ -71,11 +83,14 @@ const Post = ({ item }) => {
           <p className="text-gray-400">{item.author}</p>
         </div>
         <div className="flex flex-col justify-between mt-4">
-          <Link to="/showMore">
-            <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md">
+          <div>
+            <button
+              onClick={() => handleShowMoreClick(item)}
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md shadow-md"
+            >
               Show More
             </button>
-          </Link>
+          </div>
           <div className="flex flex-row justify-start mt-4 space-x-2">
             <a href="#">
               <img src={facebook} alt="facebook" className="w-6 h-6" />

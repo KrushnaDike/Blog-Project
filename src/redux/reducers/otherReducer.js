@@ -4,6 +4,7 @@ const initialState = {
   loading: false,
   logo: null,
   contacts: null,
+  enquiries: null,
   message: null,
   error: null,
 };
@@ -20,6 +21,18 @@ const otherSlice = createSlice({
       state.contacts = action.payload;
     },
     getAllContactsFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
+    getAllEnquiriesRequest: (state) => {
+      state.loading = true;
+    },
+    getAllEnquiriesSuccess: (state, action) => {
+      state.loading = false;
+      state.enquiries = action.payload;
+    },
+    getAllEnquiriesFail: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
@@ -74,6 +87,18 @@ const otherSlice = createSlice({
       state.error = action.payload;
     },
 
+    enquiryRequest: (state) => {
+      state.loading = true;
+    },
+    enquirySuccess: (state, action) => {
+      state.loading = false;
+      state.message = action.payload;
+    },
+    enquiryFail: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
+
     clearError: (state) => {
       state.error = null;
     },
@@ -90,12 +115,18 @@ export const {
   getAllContactsRequest,
   getAllContactsSuccess,
   getAllContactsFail,
+  getAllEnquiriesRequest,
+  getAllEnquiriesSuccess,
+  getAllEnquiriesFail,
   getLogoRequest,
   getLogoSuccess,
   getLogoFail,
   createLogoSuccess,
   createLogoFail,
   createLogoRequest,
+  enquirySuccess,
+  enquiryFail,
+  enquiryRequest,
   updateLogoRequest,
   updateLogoSuccess,
   updateLogoFail,

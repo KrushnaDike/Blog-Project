@@ -13,10 +13,10 @@ import otherReducer from "./reducers/otherReducer";
 import shortsReducer from "./reducers/shortsReducer";
 
 // PRODUCTION
-// export const server = "https://blog-server-sp45.onrender.com/api/v1";
+export const server = "https://blog-server-sp45.onrender.com/api/v1";
 
 // DEVELOPMENT
-export const server = "http://localhost:2000/api/v1";
+// export const server = "http://localhost:2000/api/v1";
 
 const store = configureStore({
   reducer: {

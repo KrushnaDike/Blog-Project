@@ -129,6 +129,13 @@ const Sidebar = () => {
       to: "/admin/user-messages",
       permission: "UserMessages",
     },
+    {
+      key: "/admin/user-enquiries",
+      icon: <MessageOutlined />,
+      label: "User Enquiries",
+      to: "/admin/user-enquiries",
+      permission: "UserEnquiries",
+    },
   ];
 
   const dispatch = useDispatch();

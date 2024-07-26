@@ -1,5 +1,14 @@
 import React, { useState, useEffect, Fragment } from "react";
-import { Table, Button, Modal, Form, Input, Select, Image } from "antd";
+import {
+  Table,
+  Button,
+  Modal,
+  Form,
+  Input,
+  Select,
+  Image,
+  Checkbox,
+} from "antd";
 import Layout from "./Layout";
 import { useDispatch, useSelector } from "react-redux";
 import { clearError, clearMessage } from "../../../redux/reducers/postsReducer";
@@ -21,9 +30,10 @@ const Posts = () => {
   const [content, setContent] = useState("");
   const [metaKeywords, setMetaKeywords] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
-  const [image, setImage] = useState(null); // change initial state to null
-  const [avatar, setAvatar] = useState(""); // preview of image
-  const [currentImageBlob, setCurrentImageBlob] = useState(null); // store current image blob
+  const [enquiryForm, setEnquiryForm] = useState(false);
+  const [image, setImage] = useState(null);
+  const [avatar, setAvatar] = useState("");
+  const [currentImageBlob, setCurrentImageBlob] = useState(null);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [form] = Form.useForm();
@@ -125,6 +135,7 @@ const Posts = () => {
       myForm.append("content", content);
       myForm.append("metaKeywords", metaKeywords);
       myForm.append("metaDescription", metaDescription);
+      myForm.append("enquiryForm", enquiryForm);
       if (image) {
         myForm.append("file", image);
       } else if (currentImageBlob) {
@@ -158,6 +169,7 @@ const Posts = () => {
     setAuthor(record.author);
     setMetaKeywords(record.metaKeywords);
     setMetaDescription(record.metaDescription);
+    setEnquiryForm(record.enquiryForm);
     setAvatar(record.thumbnailImage.url);
 
     // Convert the URL to a blob
@@ -175,6 +187,7 @@ const Posts = () => {
       author: record.author,
       metaKeywords: record.metaKeywords,
       metaDescription: record.metaDescription,
+      enquiryForm: record.enquiryForm,
     });
   };
 
@@ -316,25 +329,49 @@ const Posts = () => {
                       ]}
                     >
                       <Input.TextArea
-                        rows={6}
                         placeholder="Enter Content"
                         onChange={(e) => setContent(e.target.value)}
                       />
                     </Form.Item>
 
-                    <Form.Item name="metaKeywords" label="Meta Keywords">
+                    <Form.Item
+                      name="metaKeywords"
+                      label="Meta Keywords"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter the meta keywords!",
+                        },
+                      ]}
+                    >
                       <Input
                         placeholder="Enter Meta Keywords"
                         onChange={(e) => setMetaKeywords(e.target.value)}
                       />
                     </Form.Item>
 
-                    <Form.Item name="metaDescription" label="Meta Description">
-                      <Input.TextArea
-                        rows={4}
+                    <Form.Item
+                      name="metaDescription"
+                      label="Meta Description"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter the meta description!",
+                        },
+                      ]}
+                    >
+                      <Input
                         placeholder="Enter Meta Description"
                         onChange={(e) => setMetaDescription(e.target.value)}
                       />
+                    </Form.Item>
+
+                    <Form.Item name="enquiryForm" valuePropName="checked">
+                      <Checkbox
+                        onChange={(e) => setEnquiryForm(e.target.checked)}
+                      >
+                        Enquiry Form
+                      </Checkbox>
                     </Form.Item>
                   </Form>
                 </Modal>

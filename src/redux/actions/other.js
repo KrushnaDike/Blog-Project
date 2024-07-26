@@ -7,9 +7,15 @@ import {
   createLogoFail,
   createLogoRequest,
   createLogoSuccess,
+  enquiryFail,
+  enquiryRequest,
+  enquirySuccess,
   getAllContactsFail,
   getAllContactsRequest,
   getAllContactsSuccess,
+  getAllEnquiriesFail,
+  getAllEnquiriesRequest,
+  getAllEnquiriesSuccess,
   getLogoFail,
   getLogoRequest,
   getLogoSuccess,
@@ -39,6 +45,29 @@ export const contactUs = (name, email, mobile, message) => async (dispatch) => {
   }
 };
 
+export const enquiryUs =
+  (postId, name, email, message, mobile) => async (dispatch) => {
+    // console.log(name, email, mobile, message, postId);
+    try {
+      dispatch(enquiryRequest());
+      const { data } = await axios.post(
+        `${server}/other/enquiryMsg/${postId}`,
+        { name, email, mobile, message },
+        {
+          headers: {
+            "Content-type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
+      dispatch(enquirySuccess(data.message));
+    } catch (error) {
+      console.log("🚀 ~ login ~ error:", error);
+      dispatch(enquiryFail(error.response.data.message));
+    }
+  };
+
 // Get all contacts
 export const getAllContacts = () => async (dispatch) => {
   try {
@@ -54,6 +83,24 @@ export const getAllContacts = () => async (dispatch) => {
   } catch (error) {
     console.log("🚀 ~ getAllPopups ~ error:", error);
     dispatch(getAllContactsFail(error.response.data.message));
+  }
+};
+
+// Get all Enquiries
+export const getAllEnquiries = () => async (dispatch) => {
+  try {
+    dispatch(getAllEnquiriesRequest());
+    const { data } = await axios.get(`${server}/other/getAllEnquiries`, {
+      headers: {
+        "Content-type": "application/json",
+      },
+      withCredentials: true,
+    });
+
+    dispatch(getAllEnquiriesSuccess(data.enquiries));
+  } catch (error) {
+    console.log("🚀 ~ getAllPopups ~ error:", error);
+    dispatch(getAllEnquiriesFail(error.response.data.message));
   }
 };
 

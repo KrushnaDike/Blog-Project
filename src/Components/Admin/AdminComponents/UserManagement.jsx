@@ -41,7 +41,7 @@ const UserManagement = () => {
     }
 
     dispatch(getAllUsers());
-  }, [dispatch, error, message, users]);
+  }, [dispatch, error, message]);
 
   const columns = [
     {
@@ -141,6 +141,7 @@ const UserManagement = () => {
     "Footer",
     "UserManagement",
     "UserMessages",
+    "UserEnquiries",
   ];
 
   return (

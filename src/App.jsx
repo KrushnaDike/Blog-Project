@@ -60,6 +60,7 @@ import AdminYoutubeShorts from "./Components/Admin/AdminComponents/AdminYoutubeS
 import Loader from "./Components/Layout/Loader/Loader.jsx";
 import UserMessages from "./Components/Admin/AdminComponents/UserMessages.jsx";
 import Navbar from "./Pages/Navbar.jsx";
+import UserEnquiries from "./Components/Admin/AdminComponents/UserEnquiries.jsx";
 
 function App() {
   const { isAuthenticated, user, error, message, loading } = useSelector(
@@ -134,6 +135,7 @@ function App() {
                 element={<UserManagement />}
               />
               <Route path="/admin/user-messages" element={<UserMessages />} />
+              <Route path="/admin/user-enquiries" element={<UserEnquiries />} />
             </>
           ) : isAuthenticated ? (
             <>
